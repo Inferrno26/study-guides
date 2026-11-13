@@ -1,0 +1,13 @@
+{
+  "name": "midterm-study-guides",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fall 2026 midterm study guides (Data Mining, AI, Computer Networks)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Computer Networks Key Ideas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a study console. Sticky toolbar with tabs, search and section jumps; one column of idea rows, each led by a clickable keyword chip. */
+:root{
+  --bg:#f2f5fa;
+  --surface:#ffffff;
+  --ink:#141b2b;
+  --muted:#566176;
+  --line:#d9e0ec;
+  --accent:#2450b8;
+  --accent-soft:#e3eafb;
+  --trap:#b4313f;
+  --trap-soft:#fbe6e8;
+  --check:#8a5a00;
+  --check-soft:#fbf0d9;
+  --good:#1d7a3a;
+  --good-soft:#e3f3e7;
+  --sky:#0a7380; --sky-soft:#ddf2f3;
+  --code-bg:#f7f9fc; --tok-k:#7a3e9d; --tok-s:#0d6b57; --tok-n:#a14a00; --tok-f:#1f5fa8;
+  --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f141e; --surface:#171e2c; --ink:#e5eaf3; --muted:#98a3b8; --line:#2a3346;
+    --accent:#86a7ff; --accent-soft:#1c2a4d; --trap:#f08590; --trap-soft:#3a1d22;
+    --check:#e9b553; --check-soft:#3a2f17; --good:#6fd38c; --good-soft:#18331f; --sky:#62d1db; --sky-soft:#123338; --code-bg:#121826; --tok-k:#d29ef0; --tok-s:#7fd6b9; --tok-n:#f0a868; --tok-f:#8ab8f5;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f141e; --surface:#171e2c; --ink:#e5eaf3; --muted:#98a3b8; --line:#2a3346;
+    --accent:#86a7ff; --accent-soft:#1c2a4d; --trap:#f08590; --trap-soft:#3a1d22;
+    --check:#e9b553; --check-soft:#3a2f17; --good:#6fd38c; --good-soft:#18331f; --sky:#62d1db; --sky-soft:#123338; --code-bg:#121826; --tok-k:#d29ef0; --tok-s:#7fd6b9; --tok-n:#f0a868; --tok-f:#8ab8f5;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+a{color:var(--accent)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header.top{padding:28px 0 12px}
+header.top h1{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);margin:0;text-wrap:balance;letter-spacing:-.01em}
+header.top p{margin:6px 0 0;color:var(--muted);max-width:65ch}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-top:12px;font-size:.85rem;color:var(--muted)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0}
+.bar .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
+.tab{border:0;background:transparent;padding:6px 14px;border-radius:7px;cursor:pointer;font-weight:600;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--surface)}
+.search{flex:1 1 220px;min-width:180px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:8px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.jumps{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.jump{border:1px solid var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:.82rem;cursor:pointer;color:var(--muted)}
+.jump:hover{color:var(--accent);border-color:var(--accent)}
+.count{font-size:.85rem;color:var(--muted)}
+section.lesson{margin:26px 0}
+section.lesson h2{font-family:var(--font-display);font-size:1.35rem;margin:0 0 4px;text-wrap:balance}
+section.lesson .sub{color:var(--muted);margin:0 0 10px;font-size:.92rem}
+.idea{border-bottom:1px solid var(--line);padding:9px 0}
+.idea:first-of-type{border-top:1px solid var(--line)}
+.line{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.chip{font-family:var(--font-mono);font-size:.82rem;border:1px solid var(--sky);color:var(--sky);background:var(--sky-soft);border-radius:6px;padding:2px 9px;cursor:pointer;white-space:nowrap}
+.chip::after{content:" +";opacity:.7}
+.idea.open .chip::after{content:" \2212"}
+.chip.trap{border-color:var(--trap);color:var(--trap);background:var(--trap-soft)}
+.chip.check{border-color:var(--check);color:var(--check);background:var(--check-soft)}
+.line .txt{flex:1 1 300px}
+.detail{display:none;margin:8px 0 2px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;max-width:72ch}
+.idea.open .detail{display:block}
+.detail p{margin:0 0 6px}.detail p:last-child{margin:0}
+.detail ul{margin:4px 0;padding-left:20px}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;border-radius:4px;padding:1px 6px;margin-right:6px;vertical-align:1px}
+.tag.trap{background:var(--trap-soft);color:var(--trap)}
+.tag.check{background:var(--check-soft);color:var(--check)}
+.tag.lab{background:var(--accent-soft);color:var(--accent)}
+mark{background:var(--check-soft);color:inherit;border-radius:2px}
+.cheat{margin:14px 0 4px;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.cheat table{border-collapse:collapse;width:100%;font-size:.9rem}
+.cheat caption{text-align:left;font-weight:600;padding:8px 12px;font-family:var(--font-display)}
+.cheat th,.cheat td{text-align:left;padding:7px 12px;border-top:1px solid var(--line);vertical-align:top}
+.cheat th{color:var(--muted);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.03em}
+.mini{border-collapse:collapse;font-size:.88rem;margin:6px 0;font-variant-numeric:tabular-nums}
+.mini th,.mini td{border:1px solid var(--line);padding:3px 8px;text-align:left}
+.empty{color:var(--muted);padding:20px 0;display:none}
+/* Test */
+#panel-test{display:none}
+.exam-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:20px 0 6px}
+.score{font-family:var(--font-display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+.timer{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.part{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;margin:16px 0}
+.part h3{font-family:var(--font-display);margin:0 0 4px;font-size:1.15rem}
+.part .instr{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.q{padding:10px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0}
+.q .stem{font-weight:500;margin-bottom:6px}
+.opts{display:grid;gap:4px}
+.opts label{display:flex;gap:8px;align-items:flex-start;padding:4px 6px;border-radius:6px;cursor:pointer}
+.opts label:hover{background:var(--accent-soft)}
+.fb{display:none;margin-top:6px;font-size:.9rem;padding:6px 10px;border-radius:6px}
+.graded .fb{display:block}
+.fb.ok{background:var(--good-soft);color:var(--good)}
+.fb.no{background:var(--trap-soft);color:var(--trap)}
+.bank{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.bank span{font-size:.82rem;border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-family:var(--font-mono)}
+.para{line-height:2.1;margin:0 0 14px}
+.para select{padding:2px 6px;border-radius:6px;border:1px solid var(--line);background:var(--bg);max-width:100%}
+.para select.ok{border-color:var(--good);background:var(--good-soft)}
+.para select.no{border-color:var(--trap);background:var(--trap-soft)}
+.tf{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tf .stem{flex:1 1 320px;margin:0;font-weight:400}
+.prob .given{font-size:.92rem;background:var(--bg);border-radius:8px;padding:8px 12px;margin:6px 0}
+.field{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.field label{flex:1 1 300px}
+.field input,.field select{width:150px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.field input.ok,.field select.ok{border-color:var(--good);background:var(--good-soft)}
+.field input.no,.field select.no{border-color:var(--trap);background:var(--trap-soft)}
+.sol{display:none;margin-top:8px;font-size:.9rem;border-left:3px solid var(--accent);padding:4px 12px}
+.graded .sol,.sol.show{display:block}
+.part-score{font-weight:600;font-variant-numeric:tabular-nums}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 30px}
+.chip:hover{filter:brightness(.95)}
+.chip.labchip{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.detail.wide{max-width:none}
+.legend .lg{display:flex;align-items:center;gap:8px}
+.chip.demo{cursor:default}
+.chip.demo::after{content:none}
+.detail h4{font-family:var(--font-display);font-size:1rem;margin:14px 0 6px}
+.detail h4:first-child{margin-top:0}
+.codewrap{margin:6px 0 4px;border:1px solid var(--line);border-radius:8px;background:var(--code-bg);overflow:hidden}
+.codehead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 10px;border-bottom:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.codehead b{color:var(--ink);font-weight:600}
+.copy{border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:1px 8px;font-size:.75rem;cursor:pointer}
+pre.code,pre.out,pre.ascii{margin:0;padding:10px 12px;overflow-x:auto;font-family:var(--font-mono);font-size:.8rem;line-height:1.5;white-space:pre;tab-size:4}
+pre.out{border-top:1px dashed var(--line);color:var(--muted);background:var(--bg);max-height:320px;overflow:auto}
+pre.ascii{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}
+.note{font-size:.88rem;color:var(--muted);margin:2px 0 10px}
+.tok-k{color:var(--tok-k);font-weight:500}.tok-s{color:var(--tok-s)}.tok-c{color:var(--muted);font-style:italic}.tok-n{color:var(--tok-n)}.tok-f{color:var(--tok-f)}
+.ran{font-size:.72rem;font-weight:600;border-radius:4px;padding:1px 6px;margin-left:6px;text-transform:uppercase;letter-spacing:.03em}
+.ran.yes{background:var(--good-soft);color:var(--good)}.ran.no{background:var(--check-soft);color:var(--check)}
+.fullcode{display:none;margin-top:8px}
+.fullcode.show{display:block}
+.task{border-left:3px solid var(--accent);padding:2px 0 2px 12px;margin:10px 0}
+.task .tq{font-weight:600;margin-bottom:4px}
+.checks p{margin:4px 0}
+.detail .mini{display:block;overflow-x:auto;max-width:100%}
+.gotit{margin-left:auto;flex:none;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line);background:var(--surface);border-radius:50%;font-size:.95rem;line-height:1;padding:0;cursor:pointer;color:var(--muted);opacity:.55;align-self:center}
+.gotit:hover{opacity:1}
+.idea.known .gotit,.gotit.demo{background:var(--good);color:var(--surface);border-color:var(--good);opacity:1}
+.gotit.demo{cursor:default;margin:0}
+.idea.known .txt{color:var(--muted)}
+.prog{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:8px;font-size:.85rem;color:var(--muted)}
+.track{flex:1 1 160px;max-width:320px;height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.fill{height:100%;width:0;background:var(--good);border-radius:999px;transition:width .2s}
+.jump[aria-pressed="true"]{color:var(--good);border-color:var(--good);background:var(--good-soft)}
+/* Split screen: ideas left, test right, each scrolls on its own */
+.tab{position:relative}
+@media (min-width:1100px){
+  body.split .wrap{max-width:1680px}
+  body.split main.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+  body.split main.wrap.one{grid-template-columns:minmax(0,960px);justify-content:center}
+  body.split main.wrap{padding-bottom:0}
+  body.split #panel-ideas,body.split #panel-test{position:sticky;top:var(--barh,120px);height:calc(100vh - var(--barh,120px));overflow:auto;overscroll-behavior:contain;padding:0 10px 24px 2px}
+  body.split #panel-ideas footer{padding:12px 0 8px}
+  body.split main.wrap:not(.one) #panel-test{border-left:1px solid var(--line);padding-left:24px}
+  body.split .tab[aria-selected="false"]{text-decoration:line-through;text-decoration-thickness:1px;opacity:.75}
+  body.split footer{max-width:960px;margin:0 auto}
+}
+footer{color:var(--muted);font-size:.82rem;padding:20px 0 40px}
+@media (prefers-reduced-motion: no-preference){.detail{animation:fade .15s ease}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+<link rel="stylesheet" href="play.css">
+<script>try{window.INIT_HASH=location.hash}catch(e){window.INIT_HASH=""}</script>
+</head>
+<body>
+<nav class="cnav" aria-label="Navigation"><div class="in"><a class="back" href="index.html#networks" aria-label="Back to study options"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Back</a></div></nav>
+<div class="wrap">
+<header class="top">
+  <p class="kicker">Weeks 1–6</p>
+  <h1>Computer Networks</h1>
+  <details class="about"><summary>How this guide works</summary>
+  <p>Midterm scope: Weeks 1 to 6. Seven topic sections built from the Packet Tracer labs, the Cisco Networking Basics modules they follow (1 to 4) and the textbook chapters behind the exercise sheets (Kurose &amp; Ross Ch. 1, error detection). Click a keyword to open its explanation. The Labs section has every lab explained and every exercise sheet solved step by step. The second tab is a practice midterm with new numbers.</p>
+  <div class="legend">
+    <span class="lg"><span class="chip demo">Key idea</span> a core concept; click it to open the full explanation</span>
+    <span class="lg"><span class="chip check demo">Gap fill</span> standard lecture topic not in the labs; check it against your notes</span>
+    <span class="lg"><span class="chip trap demo">Trap</span> the explanation warns about a common exam mistake</span>
+    <span class="lg"><span class="chip labchip demo">Lab</span> a lab or exercise sheet with full worked answers</span>
+    <span class="lg"><span class="gotit demo" aria-hidden="true">&#10003;</span> tick an idea once you know it; your progress is saved in this browser</span>
+  </div>
+  </details>
+</header>
+</div>
+<div class="bar">
+  <div class="wrap">
+    <div class="row">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-ideas" aria-selected="true" aria-controls="panel-ideas">Key ideas</button>
+        <button class="tab" role="tab" id="tab-test" aria-selected="false" aria-controls="panel-test">Practice test</button>
+      </div>
+      <input id="q" class="search" type="search" placeholder="Filter ideas, e.g. DHCP, CRC, propagation" aria-label="Filter ideas">
+      <button class="btn" id="expand">Expand all</button>
+      <button class="btn" id="collapse">Collapse all</button>
+    </div>
+    <div class="jumps" id="jumps"></div>
+    <div class="prog" id="prog"><div class="track" aria-hidden="true"><div class="fill" id="fill"></div></div><span id="progtxt"></span><button class="jump" id="hideKnown" aria-pressed="false">Hide learned</button><button class="jump" id="resetKnown">Reset progress</button></div>
+  </div>
+</div>
+<main class="wrap">
+  <div id="panel-ideas" role="tabpanel" aria-labelledby="tab-ideas">
+    <p class="count" id="count"></p>
+    <div id="lessons"></div>
+    <p class="empty" id="empty">No idea matches that filter. Try a shorter word.</p>
+  </div>
+  <div id="panel-test" role="tabpanel" aria-labelledby="tab-test">
+    <div class="exam-head">
+      <div><div class="score" id="total">Score: not graded</div><div class="timer" id="timer">70:00 remaining (starts with your first answer)</div></div>
+      <div class="actions" style="margin:0"><button class="btn primary" id="gradeAll">Grade whole exam</button><button class="btn" id="resetAll">Reset</button></div>
+    </div>
+    <p class="count">Practice format (not the official one): A multiple choice (20), B word bank (30), C true/false (10), D calculations (40). Numeric answers accept small rounding differences; type binary answers as plain digits.</p>
+    <div id="exam"></div>
+    <div class="actions"><button class="btn primary" id="gradeAll2">Grade whole exam</button><button class="btn" id="resetAll2">Reset</button></div>
+  </div>
+</main>
+<div class="wrap"><footer>An unofficial student study aid built from the Week 1 to 6 labs and exercise sheets, Cisco Networking Basics Modules 1 to 4 and Kurose &amp; Ross Chapter 1 / Section 6.2. The lecture slides were not available, so check anything important against your own notes.</footer></div>
+
+<script>
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const T = (t)=>'<span class="tag trap">Trap</span>'+t;
+const C = (t)=>'<span class="tag check">Gap fill</span>'+t;
+const L = (t)=>'<span class="tag lab">Lab</span>'+t;
+const CODESTORE = {};
+
+const LESSONS = [
+{
+"id": "l1",
+"short": "1 Connected world",
+"title": "1. Communication in a connected world",
+"sub": "What a network is, network types, bits and how they travel, bandwidth vs throughput (Cisco Module 1, Kurose 1.1)",
+"ideas": [
+{
+"k": "Network",
+"t": "Two or more devices connected so they can exchange data and share resources.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A network connects devices (<b>hosts<\/b>) through links so they can exchange data. The <b>internet<\/b> is a network of networks: millions of separately owned networks joined through ISPs (Internet Service Providers). No single organization owns it.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Every other topic in the course describes a part of this picture: the devices, the links, the rules and the delays.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Kurose describes the internet two ways:<\/p><ul><li><b>Nuts-and-bolts view:<\/b> billions of <b>end systems<\/b> (hosts) joined by <b>communication links<\/b> (copper, fiber, radio) and <b>packet switches<\/b> (routers and link-layer switches).<\/li><li><b>Service view:<\/b> an infrastructure that delivers services to applications (web, email, streaming, games).<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Your phone on home Wi-Fi is a host. The Wi-Fi radio and the cable to your ISP are links. Your home router and the ISP's routers are packet switches. Loading a web page is the service view: the network delivers a service to your browser.<\/p><\/div><\/div>"
+},
+{
+"k": "Protocol",
+"t": "Agreed rules for the format and order of messages, and what to do when one is sent or received.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A protocol defines the <b>format<\/b> and <b>order<\/b> of messages exchanged between communicating devices, and the <b>actions<\/b> taken when a message is sent or received.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Devices from different makers can only talk if they follow the same rules. All networking is built from protocols.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Examples: TCP, IP, HTTP, Wi-Fi (802.11), Ethernet.<\/li><li><b>Standards<\/b> let vendors interoperate. Internet standards come from the <b>IETF<\/b> as <b>RFC<\/b> documents; Ethernet and Wi-Fi standards come from <b>IEEE 802<\/b>.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Human analogy: \"Hi\" → \"Hi\" → \"What time is it?\" → \"2:00\". If one side answers \"Hi\" with silence, the other knows something is wrong. HTTP works the same way: the browser sends a GET request in a fixed format and the server answers with a status code and the page.<\/p><\/div><\/div>"
+},
+{
+"k": "Network sizes",
+"t": "Networks are classified by the area they cover: PAN, LAN, WLAN, WAN and the internet.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A way to classify networks by geographic size and ownership.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>The size decides the technology used and who owns the links.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Type<\/th><th>Covers<\/th><th>Example<\/th><\/tr><tr><td>PAN (personal area network)<\/td><td>A few meters around one person<\/td><td>Phone + Bluetooth earbuds<\/td><\/tr><tr><td>LAN (local area network)<\/td><td>A home, office or school building; usually one owner<\/td><td>A home network<\/td><\/tr><tr><td>WLAN (wireless LAN)<\/td><td>A LAN that uses Wi-Fi<\/td><td>A home Wi-Fi network<\/td><\/tr><tr><td>WAN (wide area network)<\/td><td>Cities or countries; links usually leased from a provider<\/td><td>A company joining its Tirana and Durrës offices<\/td><\/tr><tr><td>Internet<\/td><td>The whole world<\/td><td>Network of networks<\/td><\/tr><\/table><p>Cisco also sorts networks by size: <b>SOHO<\/b> (small office / home office), <b>medium to large<\/b> (many sites) and <b>world wide<\/b> (the internet).<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>At home your earbuds form a PAN with your phone, your phone and laptop share a WLAN, and your router connects that LAN to the internet through the ISP.<\/p><\/div><\/div>"
+},
+{
+"k": "Connected devices",
+"t": "Networks now carry far more than PCs: phones, smart-home devices, cars, sensors (the Internet of Things).",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The range of devices that connect to networks today.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>More device types means more traffic, more addresses needed and more security risks.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Mobile devices:<\/b> phones, tablets, smartwatches, smart glasses.<\/li><li><b>Connected home devices:<\/b> security systems, appliances, smart TVs, gaming consoles.<\/li><li><b>Other connected devices:<\/b> smart cars, RFID tags, sensors and actuators, medical devices.<\/li><\/ul><p>Together these are the <b>Internet of Things (IoT)<\/b>.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A smart home: a thermostat sensor reports the temperature, the heating (an actuator) turns on, and you check it all from your phone while away.<\/p><\/div><\/div>"
+},
+{
+"k": "Bit",
+"t": "A binary digit, 0 or 1: the smallest unit of data, carried as electrical, light or radio signals.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>All network data is a sequence of <b>bits<\/b>. 8 bits make a <b>byte<\/b>.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Every rate and delay calculation in the course is in bits, so converting correctly is essential.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Characters are encoded as bit patterns (ASCII uses 8 bits per character). Bits travel as signals in one of three ways:<\/p><ul><li><b>Electrical<\/b> signals on copper (voltage patterns)<\/li><li><b>Optical<\/b> signals on fiber (light pulses)<\/li><li><b>Wireless<\/b> signals through the air (radio, microwave, infrared)<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>The letter \"A\" in ASCII is 01000001: 8 bits = 1 byte. A 1 GB file is 8 × 10⁹ bits, so on a 100 Mbps link it takes 8 × 10⁹ / 10⁸ = 80 seconds, not 10.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Data rates use bits (b); file sizes usually use bytes (B). A 100 Mbps link moves 12.5 megabytes per second, not 100. In delay problems, convert bytes to bits first.<\/p><\/div><\/div>"
+},
+{
+"k": "Personal data types",
+"t": "Personal data is volunteered (you share it), observed (your actions are recorded) or inferred (derived from the others).",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Cisco Module 1's three kinds of personal data that travel over networks.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It shows how much information about you exists beyond what you choose to post, which matters for privacy.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Volunteered:<\/b> you create and share it on purpose (posts, profile data).<\/li><li><b>Observed:<\/b> recorded from your actions (phone location, browsing history).<\/li><li><b>Inferred:<\/b> derived from the other two (a credit score, ad interests).<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>You post that you love football (volunteered). Your phone records you at the stadium every Sunday (observed). An ad network concludes you'd buy a season ticket (inferred).<\/p><\/div><\/div>"
+},
+{
+"k": "Bandwidth",
+"t": "The capacity of a link: how many bits per second it can carry.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Bandwidth is the amount of data a medium can carry in a given time, measured in bits per second (bps).<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the rate R in every delay formula, and the maximum the link could deliver.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Unit<\/th><th>Equals<\/th><\/tr><tr><td>bps<\/td><td>1 bit/s<\/td><\/tr><tr><td>Kbps<\/td><td>1,000 bps (10³)<\/td><\/tr><tr><td>Mbps<\/td><td>1,000,000 bps (10⁶)<\/td><\/tr><tr><td>Gbps<\/td><td>10⁹ bps<\/td><\/tr><tr><td>Tbps<\/td><td>10¹² bps<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A 56 kbps dial-up modem carries 56,000 bits per second. Sending a 560,000-bit file takes 560,000 / 56,000 = 10 seconds.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Networking rates use powers of 10: 56 kbps = 56,000 bps, not 56 × 1,024.<\/p><\/div><\/div>"
+},
+{
+"k": "Throughput",
+"t": "The rate actually achieved, usually below the bandwidth; end to end it is limited by the slowest link.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Throughput is the measured transfer of bits across the media over a given time.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Users experience throughput, not bandwidth. Knowing what limits it tells you what to upgrade.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>It is lower than the bandwidth because of the amount and type of traffic, latency (delay) from the devices on the path, and errors.<\/li><li>End to end: <b>throughput = min(R₁, R₂, …, Rₙ)<\/b>. The slowest link is the <b>bottleneck link<\/b>.<\/li><li><b>Goodput<\/b> (Kurose) counts only useful data, without headers.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Your home Wi-Fi runs at 300 Mbps but your ISP plan is 50 Mbps. A download from a fast server reaches at most 50 Mbps: the ISP link is the bottleneck, so a faster Wi-Fi router wouldn't help.<\/p><\/div><\/div>"
+}
+]
+},
+{
+"id": "l2",
+"short": "2 Components",
+"title": "2. Network components, types and connections",
+"sub": "Clients and servers, peer-to-peer, devices, media, topology diagrams, ISP and access options (Cisco Module 2, Kurose 1.2)",
+"ideas": [
+{
+"k": "Client and server",
+"t": "Servers provide services; clients request and display them.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Hosts play two roles. A <b>server<\/b> runs software that provides information or services; a <b>client<\/b> runs software that requests and displays it.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the basic model of almost every internet application.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Servers: email server, web server, file server.<\/li><li>Clients: email client, web browser, file client.<\/li><li>One computer can run several server programs at once, and one PC can be a client for many services at the same time.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Opening a website: your browser (client) asks the web server for the page, and the server sends it back. A home router is also a server: it gives out IP addresses (DHCP server) and hosts its own configuration page.<\/p><\/div><\/div>"
+},
+{
+"k": "Peer-to-peer",
+"t": "Every host acts as both client and server with no dedicated server: cheap and simple, but doesn't scale.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>In a peer-to-peer network, hosts act as both client and server, without a dedicated server.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is typical in small homes, and you need its trade-offs against client-server.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Advantages<\/th><th>Disadvantages<\/th><\/tr><tr><td>Easy to set up<\/td><td>No central administration<\/td><\/tr><tr><td>Less complex<\/td><td>Less secure<\/td><\/tr><tr><td>Lower cost (no dedicated server)<\/td><td>Not scalable<\/td><\/tr><tr><td>Good for simple tasks such as file and printer sharing<\/td><td>Devices acting as both roles can slow down<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Two laptops at home share a folder and a printer directly, no server involved. That works for 3 people; for 300 employees it becomes unmanageable and insecure.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Peer-to-peer <b>applications<\/b> (such as BitTorrent) are different: each device runs both the client and server part of one app, even on a client-server network.<\/p><\/div><\/div>"
+},
+{
+"k": "Three components",
+"t": "Network infrastructure has three parts: devices, media and services.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The three categories every network is built from.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Exam questions ask you to classify an element, e.g. \"is DHCP a device, a medium or a service?\"<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Devices:<\/b> end devices (hosts) and intermediary devices (switches, routers).<\/li><li><b>Media:<\/b> the paths data travels over (copper, fiber, wireless).<\/li><li><b>Services:<\/b> the software and processes (email, web hosting, DHCP).<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A home network: laptop and router (devices), Ethernet cable and Wi-Fi (media), the router's DHCP and the web (services).<\/p><\/div><\/div>"
+},
+{
+"k": "End devices",
+"t": "End devices (hosts) are where a message starts or finishes.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>End devices, or hosts, are the source or final destination of a message.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Hosts are what users interact with; everything else in the network exists to move data between them.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Examples: PCs, laptops, servers, printers, VoIP phones, smartphones, smart TVs. Each host has an address (IP) that identifies it on the network.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Sending an email from your laptop to a friend's phone: the laptop is the source host and the phone is the destination host. The routers in between are not end devices.<\/p><\/div><\/div>"
+},
+{
+"k": "Intermediary devices",
+"t": "Switches, routers, access points, firewalls and modems move data between hosts.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Intermediary devices connect hosts and forward data between them.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Knowing which device does what (and at which layer) is a core exam topic.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Device<\/th><th>Job<\/th><\/tr><tr><td>Switch<\/td><td>Connects devices inside one LAN; forwards frames by MAC address (link layer)<\/td><\/tr><tr><td>Router<\/td><td>Connects different networks and chooses paths; forwards packets by IP address (network layer)<\/td><\/tr><tr><td>Wireless access point (AP)<\/td><td>Connects wireless devices to the wired network<\/td><\/tr><tr><td>Firewall<\/td><td>Filters traffic to protect the network<\/td><\/tr><tr><td>Modem<\/td><td>Converts between the ISP's signal (coax, phone line) and Ethernet<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A home wireless router combines several of these in one box: a switch (its LAN ports), an access point (Wi-Fi), a router (its Internet port) plus DHCP and a firewall. The separate box from the ISP is the cable modem.<\/p><\/div><\/div>"
+},
+{
+"k": "Network media",
+"t": "Data travels over copper (twisted pair, coax), fiber optic or wireless radio.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The physical paths that carry signals between devices.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>The medium decides speed, distance, cost and how easily the signal is disturbed.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Medium<\/th><th>Signal<\/th><th>Notes<\/th><\/tr><tr><td>Twisted pair (UTP, Cat 5e/6)<\/td><td>Electrical<\/td><td>Cheap, common for Ethernet; 100 m limit; affected by interference<\/td><\/tr><tr><td>Coaxial<\/td><td>Electrical<\/td><td>Cable TV and cable internet; shielded<\/td><\/tr><tr><td>Fiber optic<\/td><td>Light<\/td><td>Very fast, long distance, immune to electromagnetic interference, more expensive<\/td><\/tr><tr><td>Wireless<\/td><td>Radio<\/td><td>Mobility; shared and more open to interference and eavesdropping<\/td><\/tr><\/table><p>Kurose calls copper and fiber <b>guided<\/b> media (the signal follows a solid medium) and radio <b>unguided<\/b>.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A typical cable-internet home: coax from the street to the cable modem, a Cat 6 cable from the modem to the router and from the router to the desktop, and Wi-Fi to the laptop and phones.<\/p><\/div><\/div>"
+},
+{
+"k": "Straight-through vs crossover",
+"t": "Straight-through cables join different device types; crossover cables join the same type.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Two ways of wiring an Ethernet cable.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Using the wrong one between older devices means no link at all, and exam and Packet Tracer questions expect the classic rule.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Straight-through:<\/b> different device types: PC to switch, PC to router LAN port, router to modem, switch to router.<\/li><li><b>Crossover:<\/b> same device type: PC to PC, switch to switch, router to router.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Connecting your PC to the home router: different types → straight-through. Connecting two PCs directly to copy files: same type → crossover.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Modern ports have Auto-MDIX and work with either cable, but exam answers and Packet Tracer still expect straight-through between unlike devices. Packet Tracer shows a wrong cable with red link lights.<\/p><\/div><\/div>"
+},
+{
+"k": "Topology diagrams",
+"t": "A physical topology shows where devices are and how they're cabled; a logical one shows ports and addressing.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Two kinds of network diagram.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Network staff use both: one to find the cable, the other to understand the addressing.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Physical topology:<\/b> where devices are physically located and how they are cabled (rooms, racks, ports).<\/li><li><b>Logical topology:<\/b> devices, ports and the IP addressing scheme, not physical location.<\/li><li>Common shapes: <b>star<\/b> (all devices to one central switch, the normal LAN design), bus, ring, mesh.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Physical: \"the switch is in room 203, rack 2, and PC 7 plugs into port 14\". Logical: \"PC 7 is 192.168.1.27 on the 192.168.1.0/24 network behind router R1\".<\/p><\/div><\/div>"
+},
+{
+"k": "ISP",
+"t": "An Internet Service Provider connects homes and businesses to the internet; ISPs connect in tiers.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>An ISP sells access to the internet.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Your traffic always leaves your home through an ISP, and the internet itself is ISPs connected together.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Local and regional (access) ISPs buy service from larger national ISPs, which connect to global <b>Tier 1<\/b> ISPs.<\/li><li>ISPs meet and exchange traffic at <b>IXPs<\/b> (Internet Exchange Points).<\/li><li>Content providers such as Google run their own large networks too.<\/li><li>The ISP usually supplies a modem or router as the boundary between your home network and theirs.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A video from a server abroad: it crosses the server's ISP, a Tier 1 ISP, possibly an IXP, your national ISP and finally your local access ISP before reaching your router.<\/p><\/div><\/div>"
+},
+{
+"k": "Access options",
+"t": "Home internet access by cable, DSL, fiber, cellular, satellite or dial-up, each with trade-offs.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The technologies that connect a home to its ISP (the access network).<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Exam questions compare them: which is shared, which is dedicated, which is fastest, which has high latency.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Option<\/th><th>How it works<\/th><th>Key facts<\/th><\/tr><tr><td>Cable<\/td><td>Cable TV coax network (HFC: hybrid fiber-coax). Cable modem at home, CMTS at the provider<\/td><td>High bandwidth, always on, <b>shared<\/b> by neighbors so it slows at busy times<\/td><\/tr><tr><td>DSL<\/td><td>Telephone line. DSL modem at home, DSLAM at the telephone office<\/td><td>Always on, <b>dedicated<\/b> line, usually asymmetric (faster down than up); slower with distance<\/td><\/tr><tr><td>Fiber (FTTH)<\/td><td>Optical fiber to the home<\/td><td>Highest speeds<\/td><\/tr><tr><td>Cellular<\/td><td>Mobile network (4G, 5G)<\/td><td>Limited by the plan and coverage<\/td><\/tr><tr><td>Satellite<\/td><td>Dish to satellite<\/td><td>Rural areas; high latency (about 270 ms one way for geostationary)<\/td><\/tr><tr><td>Dial-up<\/td><td>Phone line with a voice-band modem<\/td><td>Very slow (up to 56 kbps); ties up the phone line<\/td><\/tr><\/table><p>Businesses also use dedicated leased lines, Metro Ethernet and business DSL.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>At 8 p.m. everyone on your street streams video. On cable internet your speed drops because the neighborhood shares the coax. On DSL your line is your own, so neighbors don't slow you down (but distance from the exchange does).<\/p><\/div><\/div>"
+}
+],
+"cheat": {
+"cap": "Which cable goes where (Weeks 1 to 3)",
+"head": [
+"Link",
+"Cable",
+"Why"
+],
+"rows": [
+[
+"PC or laptop to wireless router LAN port",
+"Copper straight-through",
+"Unlike devices, Ethernet"
+],
+[
+"Router Internet port to cable modem",
+"Copper straight-through",
+"Unlike devices, Ethernet"
+],
+[
+"Cable modem to splitter / Internet cloud",
+"Coaxial",
+"Cable provider network uses coax"
+],
+[
+"Splitter to TV",
+"Coaxial",
+"TV signal comes from the cable provider"
+],
+[
+"Laptop and smartphone to router",
+"None (wireless)",
+"Join the SSID with the passphrase"
+]
+]
+}
+},
+{
+"id": "l3",
+"short": "3 Wireless",
+"title": "3. Wireless and mobile networks",
+"sub": "Wireless technologies, frequencies, mobile connectivity (Cisco Module 3)",
+"ideas": [
+{
+"k": "Wireless technologies",
+"t": "Bluetooth, Wi-Fi, cellular, GPS, NFC and infrared cover different ranges and uses.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The main wireless technologies and what each is for.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Picking the right one for a scenario is a common exam question.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Technology<\/th><th>Range and use<\/th><\/tr><tr><td>Bluetooth<\/td><td>Short range (PAN), low power: headsets, keyboards, speakers. 2.4 GHz<\/td><\/tr><tr><td>Wi-Fi (IEEE 802.11)<\/td><td>WLAN: connects devices to a home or office network and the internet<\/td><\/tr><tr><td>Cellular<\/td><td>Wide area: 3G, 4G LTE, 5G through the mobile provider's towers<\/td><\/tr><tr><td>GPS<\/td><td>Satellites send signals so the device can compute its location. Receive only<\/td><\/tr><tr><td>NFC<\/td><td>A few centimeters: contactless payments, pairing<\/td><\/tr><tr><td>Infrared<\/td><td>Line of sight, very short range: TV remotes<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Paying with your phone at a shop uses NFC. Your earbuds use Bluetooth. Navigation uses GPS to find you and cellular data to download the map.<\/p><\/div><\/div>"
+},
+{
+"k": "Electromagnetic spectrum",
+"t": "Wireless signals are radio waves on specific frequency bands: lower frequencies reach farther, higher ones carry more data.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Wireless signals are electromagnetic waves, and each technology uses specific frequency bands.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>The band explains range, wall penetration and speed differences, such as 2.4 GHz vs 5 GHz Wi-Fi.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Wi-Fi uses 2.4 GHz and 5 GHz (and 6 GHz for Wi-Fi 6E).<\/li><li>Bluetooth uses 2.4 GHz.<\/li><li>Cellular uses licensed bands owned by the mobile operator.<\/li><li><b>Lower frequencies<\/b> travel farther and pass through walls better. <b>Higher frequencies<\/b> carry more data over a shorter range.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>In a big house, 2.4 GHz Wi-Fi still works two rooms away, while 5 GHz is faster next to the router but weak behind several walls.<\/p><\/div><\/div>"
+},
+{
+"k": "Mobile connectivity",
+"t": "A smartphone has several radios and switches between Wi-Fi, cellular and Bluetooth.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>How a phone chooses and manages its wireless connections.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>These are the settings Cisco Module 3 expects you to know.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>A phone prefers a known Wi-Fi network (faster, no data-plan cost) and falls back to cellular.<\/li><li>Joining Wi-Fi: choose the network by its <b>SSID<\/b> (name) and enter the passphrase.<\/li><li>Bluetooth <b>pairing:<\/b> devices exchange a PIN or code once, then reconnect automatically.<\/li><li><b>Airplane mode<\/b> turns off all radios.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>You walk out of your home: the phone loses your Wi-Fi and switches to 4G without dropping the music streaming to your Bluetooth earbuds. Back home it rejoins your Wi-Fi automatically.<\/p><\/div><\/div>"
+},
+{
+"k": "Wireless risks",
+"t": "Wireless signals reach anyone in range, and they suffer interference from walls, distance and other devices.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The security and reliability problems specific to wireless networks.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is why home routers must be secured and why Wi-Fi can be slower than cable.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Security:<\/b> traffic is broadcast through the air, so anyone in range can try to join or listen. Fix: change the default SSID and password, use WPA2 or WPA3 encryption.<\/li><li><b>Interference:<\/b> microwaves, cordless phones and neighboring networks on the same channel.<\/li><li><b>Range:<\/b> walls and distance weaken the signal.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>An unsecured home Wi-Fi lets a neighbor use your connection or, on an open network, read unencrypted traffic. Turning on WPA2 with AES and a strong passphrase stops both.<\/p><\/div><\/div>"
+}
+]
+},
+{
+"id": "l4",
+"short": "4 Home network",
+"title": "4. Build a home network",
+"sub": "Home router, wireless standards, DHCP, default gateway, SSID and security, testing with ping (Cisco Module 4, Labs 1 to 3)",
+"ideas": [
+{
+"k": "Home router",
+"t": "A home wireless router is a switch, an access point and a router in one box, plus DHCP, NAT and a firewall.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The home wireless (integrated) router is the device at the center of a home network.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the device you configure in the home-network labs, and exam questions ask what each part of it does.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>A <b>switch<\/b> with Ethernet LAN ports for wired devices<\/li><li>A <b>wireless access point<\/b> for Wi-Fi devices<\/li><li>A <b>router<\/b> that forwards traffic between the home LAN and the ISP through its <b>Internet (WAN) port<\/b><\/li><li>Services: a <b>DHCP server<\/b>, <b>NAT<\/b> (all home devices share the one public address from the ISP) and a <b>firewall<\/b><\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>In the Packet Tracer home-network lab the router (HomeRouter-PT-AC) has the Office PC plugged into an Ethernet LAN port, the laptop and smartphone on Wi-Fi, and its Internet port cabled to the cable modem.<\/p><\/div><\/div>"
+},
+{
+"k": "IP address",
+"t": "A logical address (like 192.168.0.101) that identifies a host on a network; MAC is the fixed hardware address.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>An IPv4 address identifies a host on a network. It is four numbers from 0 to 255.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Every host needs correct IP settings to communicate beyond its own cable.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Every host needs four settings:<\/p><ul><li><b>IPv4 address<\/b>, e.g. 192.168.0.101<\/li><li><b>Subnet mask<\/b>, e.g. 255.255.255.0: which part of the address is the network<\/li><li><b>Default gateway<\/b>: the router to send to for other networks<\/li><li><b>DNS server<\/b>: turns names into addresses<\/li><\/ul><p>Home networks use <b>private addresses<\/b>: 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16. They aren't routed on the internet; the router's NAT translates them to the public address. A <b>MAC address<\/b> is the 48-bit physical address burned into the network card: IP is logical and can change, MAC stays with the hardware.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Laptop 192.168.0.101 with mask 255.255.255.0 is on network 192.168.0.0. It can talk directly to 192.168.0.102 (same network), but to reach 8.8.8.8 it must go through the default gateway, 192.168.0.1.<\/p><\/div><\/div>"
+},
+{
+"k": "DHCP",
+"t": "DHCP hands out IP settings (address, mask, gateway, DNS) to hosts automatically.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The Dynamic Host Configuration Protocol gives a host its IP address, subnet mask, default gateway and DNS server automatically.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Without it, every device would need its settings typed in by hand.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>The DHCP server hands out addresses from a <b>pool<\/b>, each as a time-limited <b>lease<\/b>.<\/li><li>In a home network the router is the DHCP server.<\/li><li>The alternative is <b>static<\/b> addressing, typed in by hand, used for servers and printers so their address never changes.<\/li><li>The router's DHCP client table lists every device that received an address.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>In the labs the home router's DHCP is set to \"Maximum Number of Users = 10\", so the pool has 10 addresses and at most 10 devices can get one at a time. A PC set to DHCP receives an address starting with 192.168.0. automatically.<\/p><\/div><\/div>"
+},
+{
+"k": "Default gateway",
+"t": "The router's address that a host sends traffic to when the destination is on another network.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The default gateway is the LAN address of the router a host uses to reach other networks.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Without a correct gateway, a host can talk to its own LAN but not to the internet.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>The host compares the destination address with its own network (using the subnet mask).<\/li><li>Same network → send directly.<\/li><li>Different network → send to the default gateway, which forwards it.<\/li><\/ol><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Your laptop (192.168.0.101) opens a website at 142.250.0.0. That isn't on 192.168.0.0, so the laptop sends the packet to its gateway 192.168.0.1 (the home router). The same address opens the router's configuration page in a browser.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>No gateway (or a wrong one) means the host can still reach devices on its own LAN but can't reach the internet.<\/p><\/div><\/div>"
+},
+{
+"k": "169.254.x.x",
+"t": "An APIPA address: the host asked for DHCP, got no answer, and gave itself an address that can't reach the internet.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>If a host set to DHCP gets no reply from a DHCP server, Windows assigns itself an <b>APIPA<\/b> (Automatic Private IP Addressing) address in 169.254.0.0/16.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Spotting 169.254 is the quickest diagnosis of \"DHCP failed\" in troubleshooting questions.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>With an APIPA address the host has no default gateway, so it can't reach the internet. It can only talk to other APIPA hosts on the same link.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A laptop shows 169.254.37.12 after trying to join Wi-Fi. It never reached the router's DHCP server: usually a wrong SSID or passphrase. Fix the Wi-Fi settings and the laptop gets a normal 192.168.0.x address.<\/p><\/div><\/div>"
+},
+{
+"k": "Router GUI login",
+"t": "Home routers are configured through a web page; change the default admin password immediately.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Home routers are configured through a web interface (GUI) that you open by browsing to the router's address.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>New routers ship with well-known default credentials, and attackers have lists of them.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>Browse to the default gateway address (e.g. 192.168.0.1).<\/li><li>Log in with the default credentials (often admin/admin).<\/li><li>Change the admin password first, before anything else.<\/li><li>Save settings on each page you change.<\/li><\/ol><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>In the labs you log in with admin/admin, then set a new administration password. Anyone who left it as admin/admin lets any device on the Wi-Fi reconfigure the router.<\/p><\/div><\/div>"
+},
+{
+"k": "SSID",
+"t": "The SSID is the wireless network's name; change the default one.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The Service Set Identifier is the network name that clients see and join.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>The default SSID often reveals the router brand, which points attackers to its default passwords and known weaknesses.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Change the default SSID to something that doesn't reveal the brand.<\/li><li>Routers can disable SSID broadcast, which hides the name from casual scans, but it is <b>not<\/b> real security: the name can still be discovered.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A network called \"Linksys-2.4G\" tells an attacker the router model. Renaming it (in the labs, to EpokaHome) removes that hint.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Hiding the SSID is not enough to secure a network. Encryption (WPA2/WPA3) is what protects it.<\/p><\/div><\/div>"
+},
+{
+"k": "Wireless security",
+"t": "Use WPA2 (or WPA3) with AES; never leave a network open or use WEP.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The encryption and authentication modes for Wi-Fi.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Without encryption anyone in range can join or listen. Choosing the right mode is a standard exam question.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Mode<\/th><th>Status<\/th><\/tr><tr><td>Open<\/td><td>Anyone in range can join<\/td><\/tr><tr><td>WEP<\/td><td>Broken: cracked in minutes<\/td><\/tr><tr><td>WPA (TKIP)<\/td><td>Outdated<\/td><\/tr><tr><td>WPA2 (AES)<\/td><td>Standard secure choice<\/td><\/tr><tr><td>WPA3<\/td><td>Newest and strongest<\/td><\/tr><\/table><ul><li><b>Personal (PSK, pre-shared key):<\/b> one passphrase for everyone. Home use.<\/li><li><b>Enterprise:<\/b> each user logs in through a RADIUS server. Business use.<\/li><li>AES is the encryption algorithm; WPA2 is the security protocol that uses it.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>The labs set the home network to WPA2 Personal with AES and a passphrase. Each laptop and phone must then enter the same passphrase to join. Extra home measures: MAC address filtering, the firewall, and keeping firmware updated.<\/p><\/div><\/div>"
+},
+{
+"k": "2.4 GHz vs 5 GHz",
+"t": "2.4 GHz reaches farther but is crowded and slower; 5 GHz is faster with a shorter range.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The two main Wi-Fi frequency bands.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Choosing a band trades range against speed and interference.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th><\/th><th>2.4 GHz<\/th><th>5 GHz<\/th><\/tr><tr><td>Range, walls<\/td><td>Longer range, better through walls<\/td><td>Shorter range<\/td><\/tr><tr><td>Speed<\/td><td>Lower<\/td><td>Higher<\/td><\/tr><tr><td>Interference<\/td><td>Crowded (Bluetooth, microwaves, neighbors); only 3 non-overlapping channels: 1, 6, 11<\/td><td>Many more non-overlapping channels, less crowded<\/td><\/tr><\/table><p>Dual-band routers broadcast on both.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>In an apartment block, a dozen neighbors' 2.4 GHz networks fight over channels 1, 6 and 11, so it's slow. Switching your laptop to 5 GHz near the router gives much higher speed.<\/p><\/div><\/div>"
+},
+{
+"k": "802.11 standards",
+"t": "Wi-Fi generations a, b, g, n, ac and ax differ in band and maximum speed.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The IEEE 802.11 family of Wi-Fi standards.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Exams ask for the band of each standard.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Standard<\/th><th>Band<\/th><th>Max speed (approx.)<\/th><\/tr><tr><td>802.11a<\/td><td>5 GHz<\/td><td>54 Mbps<\/td><\/tr><tr><td>802.11b<\/td><td>2.4 GHz<\/td><td>11 Mbps<\/td><\/tr><tr><td>802.11g<\/td><td>2.4 GHz<\/td><td>54 Mbps<\/td><\/tr><tr><td>802.11n (Wi-Fi 4)<\/td><td>2.4 and 5 GHz<\/td><td>600 Mbps; MIMO (multiple antennas)<\/td><\/tr><tr><td>802.11ac (Wi-Fi 5)<\/td><td>5 GHz<\/td><td>Several Gbps<\/td><\/tr><tr><td>802.11ax (Wi-Fi 6/6E)<\/td><td>2.4, 5 (and 6) GHz<\/td><td>About 10 Gbps; better in crowded areas<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>An old 802.11g laptop can only use 2.4 GHz at up to 54 Mbps. A mixed-mode router still serves it, while newer 802.11ac devices use 5 GHz.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>802.11a is 5 GHz even though it came first; 802.11b and g are 2.4 GHz.<\/p><\/div><\/div>"
+},
+{
+"k": "Wired home technologies",
+"t": "Wired home links: Ethernet over Cat 5e/6, coax, fiber and powerline adapters.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The cabled options inside a home network.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Wired links are faster and more reliable than Wi-Fi, so homes mix both.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Category 5e / 6 UTP Ethernet cable<\/b>: the most common.<\/li><li><b>Coaxial<\/b>: from the cable provider, also used for TV.<\/li><li><b>Fiber optic<\/b>: fiber to the home (FTTH).<\/li><li><b>Powerline<\/b> Ethernet adapters: send data over the electrical wiring.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A gaming PC far from the router: running a Cat 6 cable gives the best speed; if that isn't possible, a pair of powerline adapters (one near the router, one near the PC) uses the house wiring instead.<\/p><\/div><\/div>"
+},
+{
+"k": "Ping",
+"t": "ping sends ICMP echo requests to test whether one host can reach another, and how long the round trip takes.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>ping sends ICMP Echo Request messages and waits for Echo Replies.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the first troubleshooting tool: a reply proves the path works in both directions.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>A reply reports the round-trip time.<\/li><li>No reply means something on the path (or a firewall) is blocking it.<\/li><li>Related tools: <b>ipconfig<\/b> (show your IP settings), <b>tracert / traceroute<\/b> (list every router on the path and the delay to each), <b>nslookup<\/b> (DNS lookup).<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Testing a new Wi-Fi setup step by step: ping the gateway (192.168.0.1) from the laptop to prove the Wi-Fi link to the router works, then ping the wired PC to prove wired and wireless hosts can reach each other.<\/p><\/div><\/div>"
+}
+],
+"cheat": {
+"cap": "Week 3 configuration values",
+"head": [
+"Setting",
+"Where",
+"Value"
+],
+"rows": [
+[
+"DHCP pool size",
+"Setup > Network Setup > Maximum Number of Users",
+"10"
+],
+[
+"Admin password",
+"Administration",
+"Computer1!"
+],
+[
+"SSID (2.4 GHz)",
+"Wireless > Basic Wireless Settings",
+"EpokaHome"
+],
+[
+"Security",
+"Wireless > Wireless Security",
+"WPA2 Personal, AES"
+],
+[
+"Passphrase",
+"Wireless > Wireless Security",
+"Epoka2026!"
+],
+[
+"Laptop wireless card",
+"Laptop > Physical (power off first)",
+"WPC300N"
+]
+]
+}
+},
+{
+"id": "l5",
+"short": "5 Core and delay",
+"title": "5. Network core, switching and delay",
+"sub": "Packet vs circuit switching, the four delays, throughput, bandwidth-delay product (Kurose 1.3 and 1.4, Week 4 and 6 sheets)",
+"ideas": [
+{
+"k": "Packet switching",
+"t": "Messages are split into packets that share links on demand; nothing is reserved.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>In packet switching the source breaks a message into <b>packets<\/b> of L bits, and each packet travels through links and packet switches (routers, switches) at the full link rate R.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is how the internet works. Links are shared on demand, which uses capacity efficiently.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>No resources are reserved in advance.<\/li><li><b>Forwarding:<\/b> the local action of moving an arriving packet to the right output link, using the forwarding table.<\/li><li><b>Routing:<\/b> the network-wide process (routing algorithms) that builds those tables.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A 3 MB photo is split into about 2,000 packets of 1,500 bytes. Each router looks up each packet's destination in its forwarding table and sends it on; the receiver reassembles the photo.<\/p><\/div><\/div>"
+},
+{
+"k": "Store-and-forward",
+"t": "A router must receive a whole packet before it starts sending it on, which adds L/R per link.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A packet switch waits until it has received all L bits of a packet before it starts transmitting it on the output link.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the main reason delay grows with the number of routers on a path.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Ignoring propagation and queuing:<\/p><div class=\"kd-f\">1 packet over N links:          d = N × L / R\nP packets back to back, N links: d = (N + P − 1) × L / R<\/div><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Packet L = 12,000 bits, every link R = 1 Mbps, so L/R = 12 ms. Over 3 links (2 routers): 3 × 12 = 36 ms. Three packets back to back over the same 3 links: (3 + 3 − 1) × 12 = 60 ms.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>With one link (N = 1) there is no store-and-forward penalty: the delay is just L/R. Each extra router adds another L/R.<\/p><\/div><\/div>"
+},
+{
+"k": "Queuing and loss",
+"t": "Packets arriving faster than the link can send them wait in a buffer; when it is full, they are dropped.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Each router output link has a buffer (queue). Packets wait there when the link is busy, and are dropped when the buffer is full.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Queuing delay is the most variable part of total delay, and packet loss is what happens in congestion.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><div class=\"kd-f\">traffic intensity = L × a / R<\/div><p><b>Traffic intensity<\/b> = L·a / R, where a is the average packet arrival rate (packets per second).<\/p><ul><li>Near 0: almost no queuing delay.<\/li><li>Approaching 1: queuing delay grows very fast.<\/li><li>Above 1: bits arrive faster than they can leave, so the queue grows without limit.<\/li><\/ul><p>Design rule: keep traffic intensity below 1.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Packets of 12,000 bits arrive at 100 per second on a 1.5 Mbps link: 12,000 × 100 / 1,500,000 = 0.8. Usable, but delays are already noticeable. At 130 packets per second it would be 1.04: the queue grows until packets are lost.<\/p><\/div><\/div>"
+},
+{
+"k": "Circuit switching",
+"t": "A fixed share of every link on the path is reserved for the whole connection, even when idle.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>In circuit switching (the traditional telephone network) resources along the path are reserved when a connection is set up and kept until it ends.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the alternative to packet switching: a guaranteed rate, at the cost of wasted capacity.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>A link is shared between circuits by:<\/p><ul><li><b>FDM<\/b> (frequency-division multiplexing): each circuit gets its own frequency band all the time.<\/li><li><b>TDM<\/b> (time-division multiplexing): each circuit gets its own time slot in every frame and uses the full bandwidth during its slot.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>A 1 Mbps link divided by TDM into 10 slots gives each call a guaranteed 100 kbps, even during silences. FM radio is FDM: each station has its own frequency.<\/p><\/div><\/div>"
+},
+{
+"k": "Packet vs circuit",
+"t": "Packet switching supports many more bursty users on the same link, because they are rarely all active at once.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The comparison between the two approaches, usually asked as a calculation.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It explains why the internet uses packet switching.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Circuit switching supports only (link rate ÷ per-user rate) users, no matter how little each actually sends.<\/li><li>Packet switching allows more users, because trouble only happens when more are active than the link can carry, and that is rare. With n users each active with probability p, the number active follows a binomial distribution:<\/li><\/ul><div class=\"kd-f\">P(exactly k active) = C(n, k) × pᵏ × (1 − p)ⁿ⁻ᵏ<\/div><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Link 1 Mbps; each user needs 100 kbps when active and is active 10% of the time.<\/p><ul><li><b>Circuit:<\/b> 1,000 / 100 = 10 users, maximum.<\/li><li><b>Packet:<\/b> with 35 users, the chance that more than 10 are active at once is about 0.0004. So 35 users share the link with almost no problems.<\/li><\/ul><table class='mini'><tr><th>Packet switching<\/th><th>Circuit switching<\/th><\/tr><tr><td>Better for bursty data, simpler, no setup, more users<\/td><td>Guaranteed rate; good for constant-rate real-time traffic<\/td><\/tr><tr><td>Queuing delay and loss possible<\/td><td>Wastes reserved capacity in silences; setup time<\/td><\/tr><\/table><\/div><\/div>"
+},
+{
+"k": "Four delays",
+"t": "Delay at each node = processing + queuing + transmission + propagation.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The four components of the delay a packet experiences at each router.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Delay problems on the exam ask you to compute or compare these.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><div class=\"kd-f\">d_nodal = d_proc + d_queue + d_trans + d_prop<\/div><table class='mini'><tr><th>Delay<\/th><th>Cause<\/th><th>Size<\/th><\/tr><tr><td>Processing<\/td><td>Examine the header, check bit errors, choose the output link<\/td><td>Microseconds<\/td><\/tr><tr><td>Queuing<\/td><td>Waiting in the output buffer<\/td><td>0 to milliseconds; depends on traffic<\/td><\/tr><tr><td>Transmission<\/td><td>Pushing all L bits onto the link<\/td><td>L / R<\/td><\/tr><tr><td>Propagation<\/td><td>One bit traveling the length m of the link at speed s<\/td><td>m / s (s ≈ 2×10⁸ to 3×10⁸ m/s)<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>L = 8,000 bits on a 10 Mbps link that is 1,000 km long: d_trans = 8,000 / 10⁷ = 0.8 ms; d_prop = 10⁶ / (2 × 10⁸) = 5 ms. Over a long link, propagation dominates.<\/p><\/div><\/div>"
+},
+{
+"k": "Trans vs prop",
+"t": "Transmission delay depends on packet size and link rate; propagation delay depends only on distance and signal speed.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The difference between the two delays that are most often confused.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Mixing them up is the single most common mistake in delay questions.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>d_trans = L/R:<\/b> time to push the packet's bits onto the link. Nothing to do with distance.<\/li><li><b>d_prop = m/s:<\/b> time for one bit to travel the link. Nothing to do with packet size or link rate.<\/li><li>One packet on one link (ignoring processing and queuing): d_end-end = L/R + m/s.<\/li><\/ul><p>Where the bits are at time t = d_trans: the last bit has just left the sender. If d_prop &gt; d_trans, the first bit is still on the link, at distance s × d_trans. If d_prop &lt; d_trans, the first bit has already arrived.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>L = 1,000 bits, R = 1 Mbps, link 2,000 km, s = 2 × 10⁸ m/s. d_trans = 1 ms, d_prop = 10 ms, total 11 ms. At t = 1 ms the last bit leaves, and the first bit is 2 × 10⁸ × 0.001 = 200 km down the link: d_prop &gt; d_trans, so it hasn't arrived yet.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>A faster link makes d_trans smaller but doesn't change d_prop. Doubling R halves the transmission delay only.<\/p><\/div><\/div>"
+},
+{
+"k": "Car caravan",
+"t": "Kurose's analogy: cars are bits, the caravan is a packet, tollbooths are routers.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>An analogy that makes transmission, propagation and store-and-forward concrete.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Exam problems are often set as caravan questions.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Cars drive at 100 km/h: the <b>propagation speed<\/b>.<\/li><li>A tollbooth serves one car every 12 s: the <b>transmission rate<\/b>.<\/li><li>The caravan of 10 cars (a packet) must completely pass a tollbooth before continuing: <b>store-and-forward<\/b>.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Two tollbooths 100 km apart. Serving the whole caravan at booth 1 takes 10 × 12 s = 120 s (transmission). The last car then drives 100 km at 100 km/h = 1 hour (propagation). The caravan is lined up at booth 2 after 120 s + 3,600 s = 62 minutes.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>The car speed is the propagation speed, not the tollbooth rate. Count every tollbooth the caravan is served at, including the last one.<\/p><\/div><\/div>"
+},
+{
+"k": "Throughput",
+"t": "End-to-end throughput is set by the bottleneck link: min(Rs, Rc).",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Throughput is the rate at which the receiver actually gets bits.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It decides how long a file transfer takes, regardless of how fast the other links are.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><div class=\"kd-f\">throughput = min(Rs, Rc)      time ≈ F / min(Rs, Rc)<\/div><ul><li><b>Instantaneous<\/b> throughput: the rate at a given moment. <b>Average<\/b> throughput: file size F ÷ time to receive it.<\/li><li>Path with server link Rs and client link Rc: throughput = min(Rs, Rc).<\/li><li>If n flows share a core link of rate R, each gets about R/n, which can become the bottleneck.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Server link 2 Mbps, client link 1 Mbps, file of 32 million bits: throughput = 1 Mbps, so the transfer takes 32,000,000 / 1,000,000 = 32 seconds. Upgrading the server link wouldn't help.<\/p><\/div><\/div>"
+},
+{
+"k": "Bandwidth-delay product",
+"t": "R × d_prop is the maximum number of bits that can be on the link at once.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The bandwidth-delay product is the number of \"bits in flight\" on a link: how many bits fit between sender and receiver.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is a standard calculation, and it leads to the \"width of a bit\".<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><div class=\"kd-f\">bits in flight = R × d_prop      width of a bit = m / (R × d_prop) = s / R<\/div><ul><li>Bits in flight = R × d_prop. If the message is smaller, only the whole message fits.<\/li><li>The <b>width of a bit<\/b> = link length ÷ bits in flight = s / R meters.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Link of 20,000 km, R = 2 Mbps, s = 2.5 × 10⁸ m/s. d_prop = 2 × 10⁷ / 2.5 × 10⁸ = 0.08 s. Bits in flight = 2 × 10⁶ × 0.08 = 160,000 bits. Width of one bit = 2 × 10⁷ m / 160,000 = 125 m: longer than a football field.<\/p><\/div><\/div>"
+},
+{
+"k": "Traceroute",
+"t": "traceroute (tracert) shows every router on the path and the round-trip delay to each.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>traceroute sends probe packets so that each router on the path replies in turn.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It shows where on the path delay or loss happens.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>For each hop it shows the router's name and address and three round-trip times. Delays usually grow hop by hop.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Tracing from Tirana to a US server: a few ms for the first hops in Albania, then a jump of about 80 ms at one hop. That jump is the transatlantic cable: a long link adds a lot of propagation delay.<\/p><\/div><\/div>"
+}
+],
+"cheat": {
+"cap": "Delay formulas",
+"head": [
+"Quantity",
+"Formula",
+"Units check"
+],
+"rows": [
+[
+"Transmission delay",
+"L / R",
+"bits / (bits/s) = s"
+],
+[
+"Propagation delay",
+"m / s",
+"m / (m/s) = s"
+],
+[
+"One packet, one link",
+"L/R + m/s",
+"ignore processing and queuing"
+],
+[
+"One packet, N links (store-and-forward)",
+"N·L/R (+ N·m/s if given)",
+"N - 1 routers"
+],
+[
+"P packets, N links",
+"(N + P - 1)·L/R",
+"pipelining"
+],
+[
+"Traffic intensity",
+"L·a / R",
+"keep below 1"
+],
+[
+"Bandwidth-delay product",
+"R · d_prop",
+"bits"
+],
+[
+"Width of a bit",
+"s / R",
+"meters"
+],
+[
+"Circuit-switched users",
+"link rate / user rate",
+"round down"
+],
+[
+"Binomial P(k active)",
+"C(n,k) p^k (1-p)^(n-k)",
+"sum for 'k or more'"
+]
+]
+}
+},
+{
+"id": "l6",
+"short": "6 Layers",
+"title": "6. Protocol layers and encapsulation",
+"sub": "Likely lecture material: the standard Chapter 1 topic that the labs do not show directly",
+"ideas": [
+{
+"k": "Why layers",
+"t": "Networking is split into layers; each uses the service of the layer below and serves the layer above.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Network functions are organized as a stack of <b>layers<\/b>.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Layering breaks a huge system into manageable parts, and one layer can change (e.g. Wi-Fi replacing Ethernet) without changing the others.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>Each layer provides a service to the layer above it, using only the service of the layer below. A layer doesn't need to know how the others work.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Airline analogy: ticket purchase, baggage check, gate boarding, takeoff and flight routing each form a layer. Changing the baggage system doesn't change how you buy a ticket.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag check\">Gap fill<\/span>Your labs and sheets don't cover this, but every Kurose Chapter 1 lecture does and Cisco Module 5 introduces it. Check it against your lecture notes.<\/p><\/div><\/div>"
+},
+{
+"k": "TCP/IP stack",
+"t": "The internet's 5 layers: application, transport, network, link and physical.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The internet protocol stack used by Kurose.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>You need each layer's job, protocols and data unit.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><table class='mini'><tr><th>Layer<\/th><th>Job<\/th><th>Examples<\/th><th>Data unit<\/th><\/tr><tr><td>5 Application<\/td><td>Network applications<\/td><td>HTTP, SMTP, DNS, DHCP<\/td><td>Message<\/td><\/tr><tr><td>4 Transport<\/td><td>Process-to-process delivery<\/td><td>TCP (reliable), UDP (no guarantees)<\/td><td>Segment<\/td><\/tr><tr><td>3 Network<\/td><td>Host-to-host routing across networks<\/td><td>IP, routing protocols<\/td><td>Datagram (packet)<\/td><\/tr><tr><td>2 Link<\/td><td>Move frames between neighboring nodes; error detection<\/td><td>Ethernet, Wi-Fi<\/td><td>Frame<\/td><\/tr><tr><td>1 Physical<\/td><td>Move individual bits over the medium<\/td><td>Cables, radio<\/td><td>Bit<\/td><\/tr><\/table><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Loading a page: HTTP builds the request (application), TCP makes delivery reliable (transport), IP routes it across networks (network), Wi-Fi carries it to the router (link), and radio waves carry the bits (physical).<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag check\">Gap fill<\/span>Cisco and many lecturers use the 4-layer TCP/IP model (application, transport, internet, network access), which merges link and physical.<\/p><\/div><\/div>"
+},
+{
+"k": "OSI model",
+"t": "The 7-layer OSI reference model adds presentation and session layers.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The OSI reference model has seven layers.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the standard reference vocabulary (\"a layer 2 switch\", \"a layer 3 device\").<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p>7 Application, 6 Presentation, 5 Session, 4 Transport, 3 Network, 2 Data link, 1 Physical.<\/p><ul><li><b>Presentation:<\/b> data format, encryption, compression.<\/li><li><b>Session:<\/b> dialog control and synchronization.<\/li><li>In the internet stack, those two jobs are left to the application.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Mnemonic from 7 down to 1: \"All People Seem To Need Data Processing\".<\/p><\/div><\/div>"
+},
+{
+"k": "Encapsulation",
+"t": "Each layer adds its own header on the way down; the receiver removes them in reverse.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Encapsulation is how data passes down the stack: each layer wraps what it gets from above with its own header.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It explains what's inside a frame on the wire and which devices read which headers.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>Application message<\/li><li>+ transport header → <b>segment<\/b><\/li><li>+ network header → <b>datagram<\/b><\/li><li>+ link header and trailer → <b>frame<\/b><\/li><\/ol><p>The receiver removes headers in reverse (de-encapsulation). Devices only process the layers they need: a switch handles layers 1 and 2, a router layers 1 to 3, and hosts all five.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>An email: SMTP message → TCP adds port numbers (segment) → IP adds source and destination addresses (datagram) → Ethernet adds MAC addresses and a CRC trailer (frame). A router on the way opens the frame, reads the IP header, and re-wraps it in a new frame for the next link.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>The error-detection bits from Section 7 (CRC) are added by the link layer, usually in the frame trailer.<\/p><\/div><\/div>"
+}
+]
+},
+{
+"id": "l7",
+"short": "7 Error detection",
+"title": "7. Error detection and correction",
+"sub": "Error types, parity, 2D parity, checksum, CRC, Hamming code (Kurose 6.2, Forouzan Ch. 10, Week 5 and 6 sheets)",
+"ideas": [
+{
+"k": "Why errors",
+"t": "Interference, distortion and attenuation can flip bits; errors come as single bits or bursts.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Signals get corrupted on the way, so a 0 can arrive as a 1 or the reverse.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the reason every error-detection and correction method in this section exists.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li>Causes: <b>interference<\/b> (noise from other signals), <b>distortion<\/b> (the signal changes shape), <b>attenuation<\/b> (the signal weakens with distance).<\/li><li><b>Single-bit error:<\/b> one bit changed.<\/li><li><b>Burst error:<\/b> two or more bits changed, not necessarily next to each other. The burst length counts from the first to the last corrupted bit. Bursts are more common.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Sent 10110010, received 10010110: bits 3 and 6 (from the left) flipped. That is a burst of length 4 (from the first to the last corrupted bit), even though only 2 bits changed.<\/p><\/div><\/div>"
+},
+{
+"k": "Redundancy",
+"t": "The sender adds extra check bits computed from the data; the receiver recomputes them to detect or fix errors.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>All error control works by adding redundant bits computed from the data.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the common principle behind parity, checksums, CRC and Hamming codes.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Detection<\/b> only says an error happened; the receiver discards the data or asks for retransmission (parity, checksum, CRC).<\/li><li><b>Correction<\/b> finds which bit is wrong and fixes it: forward error correction (Hamming code; 2D parity for one bit).<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Detection: \"this message is damaged, please send it again\". Correction: \"bit 5 is wrong, flip it\", with no resend needed, which matters for satellite links where a resend takes too long.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>No method catches every error. Each misses certain error patterns; the bigger and smarter the check, the fewer slip through.<\/p><\/div><\/div>"
+},
+{
+"k": "Parity bit",
+"t": "One extra bit makes the number of 1s even (or odd); it detects an odd number of flipped bits.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The simplest check: one parity bit is added so the total number of 1s follows a rule.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the building block for 2D parity and Hamming codes.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ul><li><b>Even parity:<\/b> the parity bit makes the total number of 1s (data + parity) even.<\/li><li><b>Odd parity:<\/b> the total is odd.<\/li><li>Receiver (even parity): an even count of 1s → no error assumed; an odd count → error.<\/li><\/ul><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Even parity. Data 1011001 has four 1s → parity bit 0 → send 10110010. Data 1100001 has three 1s → parity bit 1 → send 11000011. If 10110010 arrives as 10100010, it has three 1s: odd, so an error is detected.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Single parity detects any odd number of flipped bits but misses any even number (two flips cancel out). It can't say which bit is wrong.<\/p><\/div><\/div>"
+},
+{
+"k": "2D parity",
+"t": "A parity bit for every row and every column: it detects and corrects a single flipped bit.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>Two-dimensional parity arranges the data as a table and adds a parity bit to every row and every column.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>Unlike single parity, it can locate, and so correct, a single-bit error.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>Write one data unit per row.<\/li><li>Add a parity bit at the end of each row.<\/li><li>Add a parity row at the bottom (one bit per column).<\/li><li>The bottom-right corner is the parity of the parity bits.<\/li><\/ol><p>A single flipped bit makes exactly one row and one column fail; their crossing is the wrong bit. 2D parity detects all 1, 2 and 3-bit errors, but some 4-bit errors (forming a rectangle) go unnoticed.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Even parity, three rows of 4 bits:<\/p><table class='mini'><tr><th><\/th><th>Data<\/th><th>Row parity<\/th><\/tr><tr><td>Row 1<\/td><td>1 0 1 1<\/td><td>1<\/td><\/tr><tr><td>Row 2<\/td><td>0 1 1 0<\/td><td>0<\/td><\/tr><tr><td>Row 3<\/td><td>1 1 1 0<\/td><td>1<\/td><\/tr><tr><td>Column parity<\/td><td>0 0 1 1<\/td><td>0<\/td><\/tr><\/table><p>If the third bit of row 2 flips, row 2's parity and column 3's parity both fail. Their crossing points to that bit, so the receiver flips it back.<\/p><\/div><\/div>"
+},
+{
+"k": "Checksum",
+"t": "Add k-bit blocks with wraparound (1s-complement) addition, then flip every bit of the sum.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>The internet checksum: a sum of the data blocks, sent along with the data.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is used by TCP, UDP and IP (16-bit internet checksum). Cheap to compute, but weaker than CRC.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><p><b>Sender:<\/b><\/p><ol><li>Split the data into k-bit blocks.<\/li><li>Add the blocks. Whenever the sum overflows past k bits, <b>wrap around<\/b>: add the carry back to the rightmost bit.<\/li><li>The checksum is the <b>1s complement<\/b> of the sum: flip every bit.<\/li><li>Send the data plus the checksum.<\/li><\/ol><p><b>Receiver:<\/b> add all blocks including the checksum the same way. All 1s (or all 0s after complementing) means no error detected.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Two 8-bit blocks: 10110011 + 11100101 = 1 10011000 (9 bits). Wrap the carry: 10011000 + 1 = <b>10011001<\/b>. Flip every bit: checksum = <b>01100110<\/b>.<\/p><p>Receiver: 10110011 + 11100101 + 01100110 with wraparound = 11111111: all 1s, so no error.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Don't drop the carry: in 1s-complement addition it wraps back into the sum. Don't forget the final complement either.<\/p><\/div><\/div>"
+},
+{
+"k": "CRC",
+"t": "Append r zeros, divide by the generator with XOR (no carries), and send the remainder as the CRC.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A cyclic redundancy check treats the bits as a polynomial and divides by a generator using modulo-2 arithmetic (XOR, no carries or borrows).<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It is the strongest detection method in the course; Ethernet and Wi-Fi use CRC-32. A CRC with r bits detects all burst errors of length r or less.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>Write the generator G as bits from its polynomial: x³ + x² + 1 → <b>1101<\/b> (coefficients of x³ x² x¹ x⁰). Its degree r = 3 = number of CRC bits.<\/li><li>Append r zeros to the message.<\/li><li>Long division with XOR: if the leading bit is 1, XOR with G; if 0, XOR with zeros (just shift).<\/li><li>The last r bits left are the remainder: the CRC. Replace the zeros with it and send.<\/li><\/ol><p><b>Receiver:<\/b> divide the whole received word by G. Remainder 0 → no error detected.<\/p><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Message 101101, G = 1101 (r = 3). Divide 101101<b>000<\/b> by 1101 with XOR: the remainder is <b>010<\/b>. Send 101101<b>010<\/b>. The receiver divides 101101010 by 1101 and gets remainder 000: no error.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>x⁴ + x + 1 is 10011, not 1011: write a 0 for every missing power. The CRC always has exactly r bits, so keep leading zeros (remainder 010, not 10).<\/p><\/div><\/div>"
+},
+{
+"k": "Hamming code",
+"t": "Parity bits at positions 1, 2, 4, 8… each check a set of positions; the failed checks spell out where the error is.",
+"d": "<div class=\"kd\"><div class=\"kd-s\"><span class=\"kd-l\">What it is<\/span><p>A Hamming code adds several parity bits arranged so that the pattern of failed checks gives the position of a single wrong bit.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">Why it matters<\/span><p>It <b>corrects<\/b> any single-bit error without a resend. The extended version (one extra overall parity bit) also detects 2-bit errors.<\/p><\/div><div class=\"kd-s\"><span class=\"kd-l\">How it works<\/span><ol><li>For m data bits choose the smallest r with 2^r ≥ m + r + 1. 4 data bits → 3 parity bits (7-bit code); 5 data bits → 4 (9-bit code).<\/li><li>Parity bits go at positions that are powers of 2 (1, 2, 4, 8); data fills the rest.<\/li><li>Parity bit P<sub>k<\/sub> checks every position whose binary number has that bit set: P1 → 1, 3, 5, 7, 9…; P2 → 2, 3, 6, 7, 10, 11…; P4 → 4, 5, 6, 7, 12…; P8 → 8 to 15.<\/li><li>To check a received word, recompute each check (even parity), write 1 for each check that fails, and read them as the binary number P8 P4 P2 P1: that <b>syndrome<\/b> is the position of the wrong bit. 0 = no error.<\/li><\/ol><\/div><div class=\"kd-s kd-eg\"><span class=\"kd-l\">Example<\/span><p>Encode data 1011 (position 1 = rightmost). Data goes to positions 7, 6, 5, 3 = 1, 0, 1, 1.<\/p><ul><li>P1 checks 3, 5, 7: 1 + 1 + 1 = 3 → P1 = 1<\/li><li>P2 checks 3, 6, 7: 1 + 0 + 1 = 2 → P2 = 0<\/li><li>P4 checks 5, 6, 7: 1 + 0 + 1 = 2 → P4 = 0<\/li><\/ul><p>Codeword (positions 7 to 1): <b>1010101<\/b>. If position 5 flips, it arrives as 1000101. Checks P1 and P4 fail, P2 passes → syndrome 101 = 5, so flip position 5 back.<\/p><\/div><div class=\"kd-note\"><p><span class=\"tag trap\">Trap<\/span>Position numbering: in your sheets, position 1 is the <b>rightmost<\/b> bit. The Week 6 answer (11001 → 111001101) only works counting from the right. Write the position numbers above the bits before you start.<\/p><\/div><\/div>"
+}
+],
+"cheat": {
+"cap": "Which method does what",
+"head": [
+"Method",
+"Detects",
+"Corrects",
+"Used in"
+],
+"rows": [
+[
+"Single parity",
+"Odd number of bit errors",
+"No",
+"Simple serial links, memory"
+],
+[
+"2D parity",
+"All 1, 2, 3-bit errors",
+"Single-bit errors",
+"Teaching example"
+],
+[
+"Checksum",
+"Most errors; weaker",
+"No",
+"IP, TCP, UDP (transport/network)"
+],
+[
+"CRC",
+"All bursts up to r bits, very strong",
+"No",
+"Ethernet, Wi-Fi (link layer)"
+],
+[
+"Hamming code",
+"Single-bit (2-bit with extra parity bit)",
+"Single-bit errors",
+"ECC memory, forward error correction"
+]
+]
+}
+}
+];
+
+const LABS = [
+ {k:"Week 1: First home network", t:"PC, wireless router, cable modem, Internet cloud, server, laptop.", d:`<p><b>Goal:</b> get to know Packet Tracer (a Cisco network simulator for practicing without real hardware) and build the most basic home network with an internet connection.</p>
+<table class="mini"><tr><th>Link</th><th>From</th><th>To</th><th>Cable</th></tr>
+<tr><td>1</td><td>PC FastEthernet0</td><td>Wireless router Ethernet 1</td><td>Copper straight-through</td></tr>
+<tr><td>2</td><td>Wireless router Internet</td><td>Cable modem Port 1</td><td>Copper straight-through</td></tr>
+<tr><td>3</td><td>Cable modem Port 0</td><td>Internet cloud Coaxial7</td><td>Coaxial</td></tr>
+<tr><td>4</td><td>Internet cloud Ethernet6</td><td>Cisco.com server FastEthernet0</td><td>Copper straight-through</td></tr>
+<tr><td>5</td><td>Laptop</td><td>Wireless router</td><td>Wireless: turn the laptop off, replace its module with WPC300N, turn on</td></tr></table>
+<h4>What it teaches</h4><ul><li>Unlike devices use straight-through copper; the cable provider side uses coax.</li><li>The router's <b>Internet</b> port faces the ISP, its <b>Ethernet</b> ports face the home LAN.</li><li>A wireless card must be installed with the device powered off.</li><li>This is the cable access option from Section 2.</li></ul>`},
+ {k:"Week 2: Configure the wireless router", t:"DHCP, default gateway, router GUI, DHCP limit, admin password.", d:`<p><b>Topology:</b> Office PC, Home Wireless Router, Cable Modem, Cable Splitter, TV, Internet (Cloud-PT) and a server. Also the Cisco quizzes 2.4.3 (Network components, types and connections) and 3.3.3 (Wireless and mobile networks), and the <b>Checkpoint Exam: Build a Small Network</b>, which covers Modules 1 to 4.</p>
+<h4>Steps and the reason for each</h4><table class="mini"><tr><th>Step</th><th>Why</th></tr>
+<tr><td>TV status ON, upload the TV image in Cloud-PT > Config > TV Settings</td><td>The Cloud plays the cable TV provider; the TV signal reaches the TV over coax through the splitter.</td></tr>
+<tr><td>Office PC > IP Configuration > DHCP</td><td>The router's DHCP server gives the PC an address (starts with 192: a private address) on the same network as the router.</td></tr>
+<tr><td>Note the default gateway</td><td>It is the router's LAN address, the way out to other networks.</td></tr>
+<tr><td>Browse to the gateway address, log in admin/admin</td><td>Home routers are configured through a web GUI; default credentials are public knowledge.</td></tr>
+<tr><td>Maximum Number of Users = 10, Save Settings</td><td>Limits the DHCP pool so at most 10 devices get an address.</td></tr>
+<tr><td>Administration: new password Computer1!</td><td>Never keep default passwords.</td></tr></table>
+<p>${T('Changes are lost unless you click Save Settings on every page. If you lose the connection after a change, toggle Static and DHCP in IP Configuration to renew the address.')}</p>`},
+ {k:"Week 3: Wireless network and troubleshooting", t:"SSID, WPA2/AES, joining wireless clients, ping, DHCP client table, the TV question.", d:`<p>Rebuild Week 2, then add a Laptop and a Smartphone that connect without cables.</p>
+<h4>New steps</h4><ul><li><b>SSID</b> EpokaHome on 2.4 GHz; <b>WPA2 Personal + AES</b>; passphrase Epoka2026!.</li><li>Laptop: power off, swap in WPC300N, PC Wireless > Connect > EpokaHome > passphrase.</li><li>Smartphone: Config > Wireless0 > SSID, WPA2-PSK, passphrase.</li><li>Verify: both get a 192 address from DHCP. A <b>169.254</b> address means it did not join (APIPA).</li><li>Laptop pings the gateway (Wi-Fi to router works), then the Office PC (wired and wireless hosts share the same LAN). The first ping may time out while ARP resolves the MAC address.</li><li>DHCP Client Table lists Office PC, Laptop and Smartphone: three leases.</li></ul>
+<h4>Part 4: What happened to the TV, and why?</h4>
+<p><b>Cable removed:</b> the TV shows no picture. The TV program travels from the cable provider (Cloud-PT) over <b>coaxial</b> cable through the splitter. With no link (or the wrong cable type, such as copper straight-through) there is no physical path for the signal. Reconnecting with a <b>coaxial</b> cable brings the picture back.</p>
+<p><b>Image removed:</b> the TV again shows no program even though the cable is fine. The link works but the source sends nothing: the Cloud plays the role of the cable TV provider and the image is the content it broadcasts. Uploading it again restores the picture.</p>
+<p>Lesson: troubleshoot step by step. A working connection needs both a correct physical path and a working source. This also shows that one coax line from the provider carries both TV and internet, split between the TV and the cable modem.</p>`},
+ {k:"Week 4 sheet: Delay and switching", t:"Full worked answers to Questions 1 to 4.", d:`<h4>Question 1: Car caravan</h4><p>150 km with three tollbooths: two segments of 75 km. Driving one segment: 75 / 100 h = 45 min.</p>
+<p><b>(a) 10 cars:</b> each booth takes 10 &times; 12 = 120 s = 2 min. Three booths: 3 &times; 2 = 6 min. Driving: 2 &times; 45 = 90 min. <b>Total = 96 min.</b></p>
+<p><b>(b) 8 cars:</b> each booth 8 &times; 12 = 96 s. Three booths: 288 s = 4.8 min. <b>Total = 94.8 min (94 min 48 s).</b></p>
+<h4>Question 2: Two hosts, one link</h4><ul><li>(a) d<sub>prop</sub> = m / s</li><li>(b) d<sub>trans</sub> = L / R</li><li>(c) d<sub>end-end</sub> = L/R + m/s</li><li>(d) At t = d<sub>trans</sub> the last bit has just left host A.</li><li>(e) d<sub>prop</sub> &gt; d<sub>trans</sub>: the first bit is in the link, s&middot;d<sub>trans</sub> meters from A, not yet at B.</li><li>(f) d<sub>prop</sub> &lt; d<sub>trans</sub>: the first bit has already reached B.</li><li>(g) Set m/s = L/R &rArr; m = L&middot;s/R = 120 &times; 2.5&times;10<sup>8</sup> / 56,000 = <b>535,714 m &asymp; 536 km</b>.</li></ul>
+<h4>Question 3: Circuit vs packet switching</h4><ul><li>(a) 3 Mbps / 150 kbps = <b>20 users</b>.</li><li>(b) p = <b>0.1</b>.</li><li>(c) P(n) = C(120, n) &middot; 0.1<sup>n</sup> &middot; 0.9<sup>120 - n</sup>.</li><li>(d) P(n &ge; 21) = 1 - &Sigma;<sub>n=0</sub><sup>20</sup> C(120, n) 0.1<sup>n</sup> 0.9<sup>120-n</sup> &asymp; <b>0.0079</b> (under 1%). The expected number active is 12, so 21 or more is rare: packet switching supports 120 users where circuit switching supports 20.</li></ul>
+<p>${T('Some solution manuals give about 0.003 for (d) because they approximate the binomial with a normal curve. The exact binomial value is 0.0079. Show the formula; that is where most of the marks are.')}</p>
+<h4>Question 4: Bandwidth-delay product</h4><ul><li>(a) d<sub>prop</sub> = 2&times;10<sup>7</sup> m / 2.5&times;10<sup>8</sup> = 0.08 s. R&middot;d<sub>prop</sub> = 2&times;10<sup>6</sup> &times; 0.08 = <b>160,000 bits</b>.</li><li>(b) The file (800,000 bits) is bigger than the link holds, so at most <b>160,000 bits</b> are in the link at once.</li><li>(c) Width = m / (R&middot;d<sub>prop</sub>) = m / (R&middot;m/s) = <b>s / R</b>.</li><li>(d) 2.5&times;10<sup>8</sup> / 2&times;10<sup>6</sup> = <b>125 m</b>. Yes, longer than a football field (about 100 to 110 m).</li></ul>`},
+ {k:"Week 5 sheet: Error detection", t:"Full worked answers: 2D parity, checksum, CRC, Hamming.", d:`<h4>Question 1: Two-dimensional parity (even)</h4>
+<p><b>(a)</b></p><pre class="ascii">          data      row parity
+row 1   1 0 0 1 1 0 0 1 | 0   (four 1s)
+row 2   1 1 1 0 0 0 1 0 | 0   (four 1s)
+row 3   0 0 1 0 0 1 0 0 | 0   (two 1s)
+row 4   1 0 0 0 0 1 0 0 | 0   (two 1s)
+        ----------------+--
+column  1 1 0 1 1 0 1 1 | 0</pre>
+<p>Sent: 100110010 111000100 001001000 100001000 110110110.</p>
+<p><b>(b)</b></p><pre class="ascii">row 1   1 0 1 0 1 0 1 | 0   (four 1s)
+row 2   1 1 1 0 1 0 1 | 1   (five 1s)
+row 3   0 1 1 0 1 0 1 | 0   (four 1s)
+row 4   1 0 1 0 1 0 0 | 1   (three 1s)
+        --------------+--
+column  1 0 0 0 0 0 1 | 0</pre>
+<h4>Question 2: Checksum (8-bit blocks)</h4>
+<p>Blocks: 10011001, 11100010, 00100100, 10000100.</p>
+<pre class="ascii">  10011001
++ 11100010 = 1 01111011  -> wrap carry: 01111011 + 1 = 01111100
++ 00100100 =   10100000
++ 10000100 = 1 00100100  -> wrap carry: 00100100 + 1 = 00100101
+Sum      = 00100101
+Checksum = complement = 11011010</pre>
+<p><b>Receiver:</b> adds the four blocks and the checksum: 00100101 + 11011010 = 11111111. Complement = 00000000, so <b>no error</b> is detected.</p>
+<h4>Question 3: CRC, M = 100100, G = x<sup>3</sup> + x<sup>2</sup> + 1 = 1101</h4>
+<p>Degree 3, so append three zeros: 100100<b>000</b>.</p>
+<pre class="ascii">1 0 0 1 0 0 0 0 0
+1 1 0 1                XOR
+-------
+  1 0 0 0              bring down
+  1 1 0 1              XOR
+  -------
+    1 0 1 0
+    1 1 0 1
+    -------
+      1 1 1 0
+      1 1 0 1
+      -------
+        0 1 1 0        leading 0: XOR 0000
+          1 1 0 0
+          1 1 0 1
+          -------
+            0 0 1   = remainder</pre>
+<p>CRC = <b>001</b>. Transmitted frame = 100100<b>001</b>. The receiver divides 100100001 by 1101 and gets remainder 000, so <b>no error</b> is detected.</p>
+<h4>Question 4: Hamming code 1011011 received (even parity)</h4>
+<p>Number the positions from the right:</p><pre class="ascii">position  7 6 5 4 3 2 1
+bit       1 0 1 1 0 1 1
+             (P4)   (P2)(P1)</pre>
+<ul><li>P1 checks 1, 3, 5, 7: 1, 0, 1, 1 = three 1s, odd &rarr; <b>fails (1)</b></li><li>P2 checks 2, 3, 6, 7: 1, 0, 0, 1 = two 1s, even &rarr; <b>passes (0)</b></li><li>P4 checks 4, 5, 6, 7: 1, 1, 0, 1 = three 1s, odd &rarr; <b>fails (1)</b></li></ul>
+<p>Syndrome P4 P2 P1 = 101 = <b>5</b>. The code word is <b>wrong</b>; bit 5 is in error. Corrected word: <b>1001011</b>.</p>`},
+ {k:"Week 6 sheet: Review", t:"Full worked answers to Exercises 1 to 4.", d:`<h4>Exercise 1</h4><p>Same as Week 4 Q2: d<sub>prop</sub> = m/s, d<sub>trans</sub> = L/R, d<sub>end-end</sub> = L/R + m/s.</p>
+<h4>Exercise 2: R2 to AN1</h4><p>d = 2 km, s = 3&times;10<sup>8</sup> m/s, L = 11,000 bits, R = 100 Mbps.</p><ul>
+<li>(a) D<sub>p</sub> = 2000 / 3&times;10<sup>8</sup> = <b>6.67 &micro;s</b></li>
+<li>(b) D<sub>s</sub> = 11,000 / 10<sup>8</sup> = <b>110 &micro;s</b></li>
+<li>(c) First bit sent to last bit received: D<sub>s</sub> + D<sub>p</sub> = <b>116.67 &micro;s</b></li>
+<li>(d) Back to back, a new packet starts every D<sub>s</sub>: 10 / 110&times;10<sup>-6</sup> = 90,909.09 &rarr; <b>90,909 packets</b> (complete ones).</li>
+<li>(e) Each packet carries 11,000 - 200 = 10,800 data bits. Data rate = R &times; 10,800/11,000 = 100 &times; 0.98182 = <b>98.18 Mbps</b> (98,181,818 bits/s).</li></ul>
+<p>${T('In (d), propagation delay does not limit how many packets the sender transmits; only transmission time does. In (e), the header bits use link time but carry no data.')}</p>
+<h4>Exercise 3: CRC, G = x<sup>4</sup> + x + 1 = 10011, M = 10010011011</h4>
+<p>Degree 4: append four zeros, 10010011011<b>0000</b>, and divide by 10011 with XOR.</p>
+<pre class="ascii">100100110110000
+10011
+-----
+000010110110000   (after the first XOR; next 1 is 5th bit)
+    10011
+    -----
+000000101110000
+      10011
+      -----
+000000001000000
+        10011
+        -----
+000000000001100   -> remainder 1100</pre>
+<p>CRC = <b>1100</b>. Transmitted = 10010011011<b>1100</b>. Divided by 10011 at the receiver it leaves 0000: <b>no error</b>.</p>
+<h4>Exercise 4: Hamming code for 11001</h4>
+<p>(a) m = 5 data bits; 2<sup>4</sup> = 16 &ge; 5 + 4 + 1, so r = 4 and the code has 9 bits. Parity at positions 1, 2, 4, 8; data at 9, 7, 6, 5, 3 (left to right).</p>
+<pre class="ascii">position  9  8  7  6  5  4  3  2  1
+          D  P8 D  D  D  P4 D  P2 P1
+data      1     1  0  0     1</pre>
+<ul><li>P1 (1, 3, 5, 7, 9): data 1, 0, 1, 1 = three 1s &rarr; P1 = 1</li><li>P2 (2, 3, 6, 7): data 1, 0, 1 = two &rarr; P2 = 0</li><li>P4 (4, 5, 6, 7): data 0, 0, 1 = one &rarr; P4 = 1</li><li>P8 (8, 9): data 1 &rarr; P8 = 1</li></ul>
+<p>Code: <b>1 1 1 0 0 1 1 0 1 = 111001101</b>, matching the sheet.</p>
+<p>(b) Received 110001101:</p><pre class="ascii">position  9 8 7 6 5 4 3 2 1
+bit       1 1 0 0 0 1 1 0 1</pre>
+<ul><li>P1 (1, 3, 5, 7, 9): 1, 1, 0, 0, 1 = three &rarr; fails, 1</li><li>P2 (2, 3, 6, 7): 0, 1, 0, 0 = one &rarr; fails, 1</li><li>P4 (4, 5, 6, 7): 1, 0, 0, 0 = one &rarr; fails, 1</li><li>P8 (8, 9): 1, 1 = two &rarr; passes, 0</li></ul>
+<p>Syndrome P8 P4 P2 P1 = 0111 = <b>7</b>. Flip bit 7 (third from the left): 110001101 &rarr; <b>111001101</b>. Corrected.</p>`}
+];
+LESSONS.push({id:"labs", short:"Labs and sheets", title:"Labs and exercise sheets: Weeks 1 to 6", sub:"What each Packet Tracer lab does and why, plus full worked solutions to every exercise sheet", ideas: LABS.map(l => ({k:l.k, t:l.t, d:l.d, lab:true}))});
+
+/* ---------- Exam data ---------- */
+const MCQ = [
+ {q:"Which device connects different networks and forwards packets between them using IP addresses?", o:["Switch","Router","Access point","Cable modem","Splitter"], a:1, e:"A router works at the network layer and connects networks. A switch connects devices inside one LAN."},
+ {q:"A laptop set to DHCP shows the address 169.254.12.7. What does this most likely mean?", o:["It has a public address","DHCP worked normally","It could not reach a DHCP server","It is using a static address","It is the default gateway"], a:2, e:"169.254.x.x is an APIPA link-local address that a host gives itself when DHCP fails."},
+ {q:"Which access technology shares bandwidth with neighbors on a coax network?", o:["DSL","Dial-up","Cable","Satellite","Leased line"], a:2, e:"Cable internet (HFC) is shared among the homes on the same segment. DSL gives each home a dedicated line."},
+ {q:"Which wireless security setting did the Week 3 lab use?", o:["Open","WEP","WPA with TKIP","WPA2 Personal with AES","WPA2 Enterprise with RADIUS"], a:3, e:"WPA2 Personal (PSK) with AES encryption and the passphrase Epoka2026!."},
+ {q:"Which delay depends on the distance between two routers?", o:["Processing","Queuing","Transmission","Propagation","None of them"], a:3, e:"Propagation delay = m/s. Transmission delay = L/R does not depend on distance."},
+ {q:"Doubling the link rate R, with everything else unchanged, will:", o:["Halve the propagation delay","Halve the transmission delay","Double the transmission delay","Not change any delay","Halve the distance"], a:1, e:"d_trans = L/R, so a faster link halves it. Propagation delay stays the same."},
+ {q:"The traffic intensity La/R is greater than 1. What happens?", o:["No queuing delay","The queue grows without limit","Propagation delay increases","The link becomes circuit switched","Throughput rises above R"], a:1, e:"Bits arrive faster than the link can send them, so the queue keeps growing."},
+ {q:"In circuit switching with TDM, each circuit gets:", o:["Its own frequency band all the time","The full bandwidth during its own time slot","Whatever bandwidth is free","Only one packet per second","A shared queue with other users"], a:1, e:"TDM gives each circuit periodic time slots at the full rate. FDM gives each circuit its own frequency band."},
+ {q:"Which error-detection method appends the remainder of a modulo-2 division?", o:["Single parity","Two-dimensional parity","Checksum","CRC","Hamming code"], a:3, e:"CRC divides the message (with r zeros appended) by the generator and sends the r-bit remainder."},
+ {q:"How many parity bits does a Hamming code need for 4 data bits?", o:["1","2","3","4","5"], a:2, e:"2^r >= m + r + 1: r = 3 gives 8 >= 8. That is the 7-bit Hamming code."}
+];
+const BANK = ["Protocol","Peer-to-peer","Intermediary device","Coaxial","Straight-through","DHCP","Default gateway","SSID","APIPA","Bandwidth","Throughput","Store-and-forward","Propagation delay","Transmission delay","Bandwidth-delay product","Parity bit","Checksum","CRC","Syndrome","Crossover"];
+const PARAS = [
+ {title:"Paragraph 1: Building the home network", parts:["The rules that set the format and order of messages between devices are a ",0," . A home network without a dedicated server, where each PC shares its own files, is a ",1," network. The cable from the cable modem to the provider is ",2," , while the PC connects to the router with a copper ",3," cable. A switch, router or access point that forwards data between hosts is an ",4," ."], ans:["Protocol","Peer-to-peer","Coaxial","Straight-through","Intermediary device"]},
+ {title:"Paragraph 2: Addresses and Wi-Fi", parts:["The Office PC receives its IP settings automatically from the router's ",0," server. To reach the internet it sends packets to its ",1," , which is also the address used to open the router GUI. Wireless clients join the network by its name, the ",2," . A client that shows an address starting with 169.254 is using ",3," because it got no answer from the server. The measured data rate a user actually gets is the ",4," ."], ans:["DHCP","Default gateway","SSID","APIPA","Throughput"]},
+ {title:"Paragraph 3: Delay and errors", parts:["A router that must receive a whole packet before sending it on uses ",0," transmission. The time a bit needs to travel the length of a link is the ",1," , while L/R is the ",2," . A receiver that adds all blocks in 1s complement and gets all 1s has verified a ",3," . In a Hamming code, the binary number formed by the failed parity checks is the ",4," , and it points to the wrong bit."], ans:["Store-and-forward","Propagation delay","Transmission delay","Checksum","Syndrome"]}
+];
+const TF = [
+ {q:"A crossover cable is the normal choice for connecting a PC to a router's LAN port.", a:false, e:"PC to router is unlike devices: straight-through."},
+ {q:"DSL gives each customer a dedicated line to the telephone office.", a:true, e:"DSL is dedicated; cable is shared."},
+ {q:"The 2.4 GHz band has longer range but more interference than the 5 GHz band.", a:true, e:"Lower frequency travels farther but the band is crowded and has only three non-overlapping channels."},
+ {q:"Hiding the SSID is enough to secure a wireless network.", a:false, e:"Hidden SSIDs can still be discovered. Use WPA2/WPA3 encryption with a strong passphrase."},
+ {q:"Transmission delay depends on the length of the link.", a:false, e:"Transmission delay is L/R. Distance only affects propagation delay."},
+ {q:"With N links and store-and-forward, one packet takes N times L/R (ignoring propagation and queuing).", a:true, e:"Each router waits for the full packet before forwarding it."},
+ {q:"End-to-end throughput is limited by the fastest link on the path.", a:false, e:"It is limited by the slowest one, the bottleneck link."},
+ {q:"Single-bit even parity can detect an error in which exactly two bits flipped.", a:false, e:"Two flips keep the count of 1s even, so the error is missed."},
+ {q:"In CRC, the number of zeros appended equals the degree of the generator polynomial.", a:true, e:"A degree-r generator gives an r-bit remainder, so r zeros are appended."},
+ {q:"A Hamming code with syndrome 0 means the received word has no single-bit error.", a:true, e:"All parity checks passed."}
+];
+const PROBS = [
+ {title:"D1. Delays on one link", pts:10,
+  given:"Host A sends a packet of 1500 bytes to host B over one link of R = 10 Mbps. The link is 3000 km long and the propagation speed is 2 × 10<sup>8</sup> m/s. Ignore processing and queuing.",
+  fields:[
+   {l:"Transmission delay (ms)", a:1.2, tol:0.01},
+   {l:"Propagation delay (ms)", a:15, tol:0.01},
+   {l:"End-to-end delay (ms)", a:16.2, tol:0.01},
+   {l:"Bandwidth-delay product (bits)", a:150000, tol:1},
+   {l:"Width of one bit in the link (m)", a:20, tol:0.01}
+  ],
+  sol:"<p>L = 1500 × 8 = 12,000 bits. d<sub>trans</sub> = 12,000 / 10<sup>7</sup> = 0.0012 s = 1.2 ms.<br>d<sub>prop</sub> = 3×10<sup>6</sup> m / 2×10<sup>8</sup> = 0.015 s = 15 ms.<br>End-to-end = 1.2 + 15 = 16.2 ms.<br>R·d<sub>prop</sub> = 10<sup>7</sup> × 0.015 = 150,000 bits.<br>Bit width = s / R = 2×10<sup>8</sup> / 10<sup>7</sup> = 20 m.</p>"},
+ {title:"D2. Circuit vs packet switching", pts:10,
+  given:"Users share a 1 Mbps link. Each user needs 100 kbps while transmitting and is active 20% of the time. With packet switching, 30 users share the link. Give probabilities to 4 decimals.",
+  fields:[
+   {l:"Users supported with circuit switching", a:10, tol:0.01},
+   {l:"Probability that a given user is transmitting", a:0.2, tol:0.0001},
+   {l:"Probability that none of the 30 users is transmitting", a:0.0012, tol:0.0001},
+   {l:"Probability that more than 10 users transmit at once (link overloaded)", a:0.0256, tol:0.0002},
+   {l:"Store-and-forward delay of one 8,000-bit packet over 3 links of 2 Mbps (ms), ignoring propagation", a:12, tol:0.01}
+  ],
+  sol:"<p>Circuit: 1000 / 100 = 10 users. p = 0.2.<br>P(0) = 0.8<sup>30</sup> = 0.0012.<br>P(X ≥ 11) = 1 − Σ<sub>k=0</sub><sup>10</sup> C(30,k) 0.2<sup>k</sup> 0.8<sup>30−k</sup> = 0.0256 (about 2.6%). Packet switching serves 30 users with a small overload risk, where circuit switching serves 10.<br>Store-and-forward: L/R = 8000 / 2×10<sup>6</sup> = 4 ms per link, × 3 links = 12 ms.</p>"},
+ {title:"D3. CRC and checksum", pts:10,
+  given:"(i) Message 1101011011, generator x<sup>4</sup> + x + 1. (ii) Two 8-bit blocks to protect with a 1s-complement checksum: 10110011 and 01101010. Type binary answers as digits, e.g. 0110.",
+  fields:[
+   {l:"Generator as bits", sel:["1011","10011","11001","10101"], a:"10011"},
+   {l:"Number of zeros appended to the message", a:4, tol:0.01},
+   {l:"CRC remainder (4 bits)", a:1110, tol:0.01},
+   {l:"Remainder the receiver gets if there is no error", a:0, tol:0.01},
+   {l:"Checksum of the two blocks (8 bits)", a:11100001, tol:0.01}
+  ],
+  sol:"<p>(i) x<sup>4</sup> + x + 1 → 10011, degree 4, append 4 zeros: 11010110110000. Dividing by 10011 with XOR leaves 1110. Transmitted: 11010110111110. The receiver's remainder is 0000 when there is no error.<br>(ii) 10110011 + 01101010 = 1 00011101; wrap the carry: 00011101 + 1 = 00011110. Checksum = complement = 11100001.</p>"},
+ {title:"D4. Hamming code and 2D parity", pts:10,
+  given:"(i) Encode the data 1010 into a 7-bit even-parity Hamming code (position 1 is the rightmost bit; data bits go to positions 7, 6, 5, 3). (ii) The word 1110010 is received. (iii) Rows 1100111, 1011101, 0111001, 0101001 are protected with even 2D parity.",
+  fields:[
+   {l:"(i) Encoded 7-bit code word", a:1010010, tol:0.01},
+   {l:"(ii) Syndrome as a decimal position (0 = no error)", a:6, tol:0.01},
+   {l:"(ii) Corrected code word", a:1010010, tol:0.01},
+   {l:"(iii) Column parity row (7 bits)", a:101010, tol:0.01},
+   {l:"(iii) Row parity bits, top to bottom (4 bits)", a:1101, tol:0.01}
+  ],
+  sol:"<p>(i) Positions 7 6 5 4 3 2 1 = 1 0 1 P4 0 P2 P1. P1 (1,3,5,7): 0,1,1 → two → 0. P2 (2,3,6,7): 0,0,1 → one → 1. P4 (4,5,6,7): 1,0,1 → two → 0. Code: 1010010.<br>(ii) 1110010: P1 checks 0,0,1,1 → pass. P2 checks 1,0,1,1 → fail. P4 checks 0,1,1,1 → fail. Syndrome P4 P2 P1 = 110 = 6. Flip bit 6: 1010010.<br>(iii) Row 1 has five 1s → 1; row 2 five → 1; row 3 four → 0; row 4 three → 1: row bits 1101. Column parity: 0101010 (enter 101010; the leading zero drops when typed as a number).</p>"}
+];
+
+/* ---------- Key ideas render ---------- */
+const lessonsEl = document.getElementById('lessons');
+const jumps = document.getElementById('jumps');
+function scrollToSection(id){
+  const el = document.getElementById(id), smooth = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  const pane = document.getElementById('panel-ideas');
+  if (document.body.classList.contains('split')) {
+    pane.scrollTo({top: Math.max(0, el.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop - 8), behavior: smooth});
+    const bar = document.querySelector('.bar'); const pTop = pane.getBoundingClientRect().top + window.scrollY - bar.offsetHeight;
+    if (window.scrollY < pTop) window.scrollTo({top: pTop, behavior: smooth});
+    return;
+  }
+  const bar = document.querySelector('.bar');
+  const top = el.getBoundingClientRect().top + window.scrollY - bar.offsetHeight - 12;
+  window.scrollTo({top: Math.max(0, top), behavior: smooth});
+}
+LESSONS.forEach(les => {
+  const sec = document.createElement('section');
+  sec.className = 'lesson'; sec.id = 'sec-' + les.id;
+  let html = '<h2>' + les.title + '</h2><p class="sub">' + les.sub + '</p>';
+  les.ideas.forEach((it, i) => {
+    const kind = it.lab ? ' labchip' : /Gap fill/.test(it.d) ? ' check' : (/Trap<\/span>/.test(it.d) ? ' trap' : '');
+    const did = les.id + '-d' + i;
+    html += '<div class="idea" data-key="' + les.id + ':' + esc(it.k.replace(/<[^>]+>/g,'')) + '"><div class="line"><button class="chip' + kind + '" aria-expanded="false" aria-controls="' + did + '">' + it.k + '</button><span class="txt">' + it.t + '</span><button class="gotit" type="button" aria-pressed="false" aria-label="Mark as learned" title="Mark as learned">&#10003;</button></div><div class="detail' + (it.lab ? ' wide' : '') + '" id="' + did + '">' + it.d + '</div></div>';
+  });
+  if (les.cheat) {
+    const c = les.cheat;
+    html += '<div class="cheat"><table><caption>' + c.cap + '</caption><thead><tr>' + c.head.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + c.rows.map(r => '<tr>' + r.map(x => '<td>' + esc(x) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div>';
+  }
+  sec.innerHTML = html;
+  lessonsEl.appendChild(sec);
+  const b = document.createElement('button');
+  b.className = 'jump'; b.textContent = les.short;
+  b.addEventListener('click', () => { showTab('ideas'); scrollToSection('sec-' + les.id); });
+  jumps.appendChild(b);
+});
+const tb = document.createElement('button'); tb.className = 'jump'; tb.textContent = 'Practice test';
+tb.addEventListener('click', () => showTab('test')); jumps.appendChild(tb);
+
+function setOpen(idea, open){ idea.classList.toggle('open', open); idea.querySelector('.chip').setAttribute('aria-expanded', open); }
+lessonsEl.addEventListener('click', e => {
+  const cp = e.target.closest('[data-copy]');
+  if (cp) { const txt = CODESTORE[cp.dataset.copy]; const done = () => { cp.textContent = 'Copied'; setTimeout(() => cp.textContent = 'Copy', 1500); };
+    try { navigator.clipboard.writeText(txt).then(done, () => { cp.textContent = 'Copy blocked: select the text'; }); } catch (err) { cp.textContent = 'Copy blocked: select the text'; } return; }
+  const fb = e.target.closest('[data-full]');
+  if (fb) { const el = document.getElementById('full-' + fb.dataset.full); el.classList.toggle('show'); fb.textContent = el.classList.contains('show') ? 'Hide full code' : 'Show full code (' + el.querySelectorAll('.codewrap').length + ' cells)'; }
+});
+
+lessonsEl.addEventListener('click', e => { const gi = e.target.closest('.gotit'); if (gi) { toggleKnown(gi.closest('.idea')); return; } const chip = e.target.closest('.chip'); if (!chip) return; const idea = chip.closest('.idea'); setOpen(idea, !idea.classList.contains('open')); });
+document.getElementById('expand').addEventListener('click', () => document.querySelectorAll('.idea').forEach(i => { if (i.style.display !== 'none') setOpen(i, true); }));
+document.getElementById('collapse').addEventListener('click', () => document.querySelectorAll('.idea').forEach(i => setOpen(i, false)));
+
+const total = document.querySelectorAll('.idea').length;
+const countEl = document.getElementById('count');
+const nSec = LESSONS.length;
+countEl.textContent = total + ' ideas across ' + nSec + ' sections.';
+/* ---------- Safe browser helpers (sandboxed viewers can refuse these) ---------- */
+function getHash(){ try { return location.hash; } catch (err) { return ''; } }
+function setHash(name){ try { if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name); } catch (err) {} }
+function getStore(){ try { return window.localStorage || null; } catch (err) { return null; } }
+/* ---------- Progress and filtering ---------- */
+const STORE_KEY = 'compnet-known-v1';
+let known = new Set(), hideKnown = false;
+try { const st = getStore(); if (st) known = new Set(JSON.parse(st.getItem(STORE_KEY) || '[]')); } catch (err) {}
+function saveKnown(){ try { const st = getStore(); if (st) st.setItem(STORE_KEY, JSON.stringify([...known])); } catch (err) {} }
+function paintKnown(idea){ const k = known.has(idea.dataset.key); idea.classList.toggle('known', k); const b = idea.querySelector('.gotit'); b.setAttribute('aria-pressed', k); b.setAttribute('aria-label', k ? 'Learned: click to unmark' : 'Mark as learned'); b.title = b.getAttribute('aria-label'); }
+function updateProgress(){
+  const n = [...document.querySelectorAll('.idea')].filter(i => known.has(i.dataset.key)).length;
+  document.getElementById('fill').style.width = (100 * n / total) + '%';
+  document.getElementById('progtxt').textContent = 'Learned ' + n + ' of ' + total;
+}
+function toggleKnown(idea){
+  const k = idea.dataset.key; if (known.has(k)) known.delete(k); else known.add(k);
+  saveKnown(); paintKnown(idea); updateProgress(); if (hideKnown) applyFilter();
+}
+function applyFilter(){
+  const raw = document.getElementById('q').value.trim(), q = raw.toLowerCase();
+  let shown = 0, cheatAny = false;
+  document.querySelectorAll('section.lesson').forEach(sec => {
+    let any = 0;
+    sec.querySelectorAll('.idea').forEach(idea => {
+      const hit = (!q || idea.textContent.toLowerCase().includes(q)) && !(hideKnown && idea.classList.contains('known'));
+      idea.style.display = hit ? '' : 'none';
+      if (hit) { any++; shown++; }
+      if (q) setOpen(idea, hit && !idea.querySelector('.chip').textContent.toLowerCase().includes(q) && !idea.querySelector('.txt').textContent.toLowerCase().includes(q));
+    });
+    const cheat = sec.querySelector('.cheat');
+    const cheatHit = cheat && q && cheat.textContent.toLowerCase().includes(q);
+    if (cheatHit) cheatAny = true;
+    if (cheat) cheat.style.display = (!q || cheatHit) ? '' : 'none';
+    sec.style.display = (any || cheatHit || (!q && !hideKnown)) ? '' : 'none';
+  });
+  const filtered = q || hideKnown;
+  countEl.textContent = filtered ? shown + ' of ' + total + ' ideas shown' + (q ? ' for "' + raw + '"' : '') + (hideKnown ? ', learned ones hidden' : '') + '.' : total + ' ideas across ' + nSec + ' sections.';
+  document.getElementById('empty').textContent = (hideKnown && !q && !shown) ? 'You have ticked every idea. Nice work.' : 'No idea matches that filter. Try a shorter word.';
+  document.getElementById('empty').style.display = (filtered && !shown && !cheatAny) ? 'block' : 'none';
+}
+document.getElementById('q').addEventListener('input', () => { showTab('ideas'); if (!document.getElementById('q').value.trim()) document.querySelectorAll('.idea').forEach(i => setOpen(i, false)); applyFilter(); });
+document.getElementById('hideKnown').addEventListener('click', e => { hideKnown = !hideKnown; e.currentTarget.setAttribute('aria-pressed', hideKnown); e.currentTarget.textContent = hideKnown ? 'Show learned' : 'Hide learned'; showTab('ideas'); applyFilter(); });
+document.getElementById('resetKnown').addEventListener('click', e => {
+  const b = e.currentTarget;
+  if (b.dataset.armed) { known.clear(); saveKnown(); document.querySelectorAll('.idea').forEach(paintKnown); updateProgress(); applyFilter(); delete b.dataset.armed; b.textContent = 'Reset progress'; }
+  else { b.dataset.armed = '1'; b.textContent = 'Click again to clear'; setTimeout(() => { delete b.dataset.armed; b.textContent = 'Reset progress'; }, 3000); }
+});
+document.querySelectorAll('.idea').forEach(paintKnown); updateProgress();
+
+/* ---------- Tabs ---------- */
+let timerStarted = false, deadline = 0, tick = null;
+const splitMQ = (window.matchMedia ? window.matchMedia('(min-width: 1100px)') : {matches:false});
+const vis = {ideas:true, test:true};
+let current = 'ideas';
+const TIMER_TEXT = document.getElementById('timer').textContent;
+const FOOT_HOME = document.querySelector('footer').parentElement;
+function isSplit(){ return !!splitMQ.matches; }
+function setBarH(){ const h = Math.ceil(document.querySelector('.bar').getBoundingClientRect().height); document.documentElement.style.setProperty('--barh', h + 'px'); }
+function render(){
+  const split = isSplit();
+  document.body.classList.toggle('split', split);
+  const showI = split ? vis.ideas : current === 'ideas';
+  const showT = split ? vis.test : current === 'test';
+  document.getElementById('panel-ideas').style.display = showI ? '' : 'none';
+  document.getElementById('panel-test').style.display = showT ? 'block' : 'none';
+  document.getElementById('tab-ideas').setAttribute('aria-selected', showI);
+  document.getElementById('tab-test').setAttribute('aria-selected', showT);
+  ['tab-ideas','tab-test'].forEach(id => document.getElementById(id).title = split ? 'Show or hide this panel' : '');
+  document.querySelector('main').classList.toggle('one', !(showI && showT));
+  document.getElementById('expand').disabled = !showI; document.getElementById('collapse').disabled = !showI;
+  const foot = document.querySelector('footer');
+  if (split && showI) document.getElementById('panel-ideas').appendChild(foot);
+  else if (split) document.getElementById('panel-test').appendChild(foot);
+  else FOOT_HOME.appendChild(foot);
+  setBarH();
+}
+function showTab(name){ current = name; if (isSplit()) vis[name] = true; render(); setHash(name); }
+function togglePanel(name){
+  if (!isSplit()) { showTab(name); return; }
+  const other = name === 'ideas' ? 'test' : 'ideas';
+  if (vis[name] && !vis[other]) { vis[other] = true; vis[name] = false; }  // never hide both: swap instead
+  else vis[name] = !vis[name];
+  render();
+}
+document.getElementById('tab-ideas').addEventListener('click', () => togglePanel('ideas'));
+document.getElementById('tab-test').addEventListener('click', () => togglePanel('test'));
+try { splitMQ.addEventListener('change', render); } catch (err) { try { splitMQ.addListener(render); } catch (e2) {} }
+window.addEventListener('resize', setBarH);
+window.addEventListener('load', setBarH);
+try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(setBarH); } catch (err) {}
+try { if (window.ResizeObserver) new ResizeObserver(setBarH).observe(document.querySelector('.bar')); } catch (err) {}
+document.getElementById('panel-test').addEventListener('change', () => { if (!timerStarted) startTimer(); });
+try { window.addEventListener('hashchange', () => showTab(getHash() === '#test' ? 'test' : 'ideas')); } catch (err) {}
+function startTimer(){
+  timerStarted = true; deadline = Date.now() + 70*60*1000;
+  const el = document.getElementById('timer');
+  const upd = () => { const ms = Math.max(0, deadline - Date.now()); const m = Math.floor(ms/60000), s = Math.floor(ms/1000)%60; el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0') + ' remaining' + (ms === 0 ? '. Time is up.' : ''); if (!ms) clearInterval(tick); };
+  upd(); tick = setInterval(upd, 1000);
+}
+
+/* ---------- Exam render ---------- */
+
+/* ---------- Exam render ---------- */
+const exam = document.getElementById('exam');
+function partHead(id, title, instr){ return '<div class="part" id="' + id + '"><h3>' + title + ' <span class="part-score" id="' + id + '-score"></span></h3><p class="instr">' + instr + '</p>'; }
+let h = partHead('pa','Section A: Multiple choice','10 questions, 2 points each. Pick one option.');
+MCQ.forEach((m,i) => { h += '<div class="q" data-i="' + i + '"><div class="stem">Q' + (i+1) + '. ' + m.q + '</div><div class="opts">' + m.o.map((o,j) => '<label><input type="radio" name="mc' + i + '" value="' + j + '" id="mc' + i + '-' + j + '"> <span>' + String.fromCharCode(65+j) + ') ' + o + '</span></label>').join('') + '</div><div class="fb"></div></div>'; });
+h += '<div class="actions"><button class="btn" data-grade="pa">Check section A</button></div></div>';
+h += partHead('pb','Section B: Fill in the blanks','15 blanks, 2 points each. Each term is used once at most; 5 are distractors.');
+h += '<div class="bank">' + BANK.map((w,i) => '<span>' + (i+1) + '. ' + w + '</span>').join('') + '</div>';
+let blank = 0;
+PARAS.forEach((p,pi) => {
+  h += '<p class="instr" style="margin-bottom:4px"><strong>' + p.title + '</strong></p><p class="para">';
+  p.parts.forEach(x => { if (typeof x === 'number') { const n = ++blank; h += '<select id="fb' + pi + '-' + x + '" aria-label="Blank ' + n + '" data-ans="' + p.ans[x] + '"><option value="">(' + n + ') choose</option>' + BANK.map(w => '<option>' + w + '</option>').join('') + '</select>'; } else h += x; });
+  h += '</p>';
+});
+h += '<div class="fb" id="pb-fb"></div><div class="actions"><button class="btn" data-grade="pb">Check section B</button></div></div>';
+h += partHead('pc','Section C: True or false','10 statements, 1 point each.');
+TF.forEach((t,i) => { h += '<div class="q"><div class="tf"><p class="stem">' + (i+1) + '. ' + t.q + '</p><label><input type="radio" name="tf' + i + '" value="true" id="tf' + i + 't"> True</label><label><input type="radio" name="tf' + i + '" value="false" id="tf' + i + 'f"> False</label></div><div class="fb"></div></div>'; });
+h += '<div class="actions"><button class="btn" data-grade="pc">Check section C</button></div></div>';
+h += partHead('pd','Section D: Calculations','4 problems, 10 points each, split evenly across the answer fields. Work on paper first, then enter the results.');
+PROBS.forEach((p,pi) => {
+  h += '<div class="q prob" id="pr' + pi + '"><div class="stem">' + p.title + '</div><div class="given">' + p.given + '</div>';
+  p.fields.forEach((f,fi) => {
+    const id = 'p' + pi + 'f' + fi;
+    h += '<div class="field"><label for="' + id + '">' + f.l + '</label>' + (f.sel ? '<select id="' + id + '"><option value="">choose</option>' + f.sel.map(s => '<option>' + s + '</option>').join('') + '</select>' : '<input id="' + id + '" type="text" inputmode="decimal" autocomplete="off">') + '</div>';
+  });
+  h += '<div class="fb"></div><button class="btn" data-sol="' + pi + '" style="margin-top:6px">Show worked solution</button><div class="sol" id="sol' + pi + '">' + p.sol + '</div></div>';
+});
+h += '<div class="actions"><button class="btn" data-grade="pd">Check section D</button></div></div>';
+exam.innerHTML = h;
+
+const scores = {};
+function grade(part){
+  let got = 0, max = 0;
+  if (part === 'pa') {
+    MCQ.forEach((m,i) => { max += 2; const sel = document.querySelector('input[name="mc' + i + '"]:checked'); const q = document.querySelectorAll('#pa .q')[i]; const fb = q.querySelector('.fb'); const ok = sel && +sel.value === m.a; if (ok) got += 2; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = (ok ? 'Correct. ' : 'Answer: ' + String.fromCharCode(65+m.a) + ') ' + m.o[m.a] + '. ') + m.e; });
+  }
+  if (part === 'pb') {
+    let wrong = [];
+    document.querySelectorAll('#pb select').forEach((s,i) => { max += 2; const ok = s.value === s.dataset.ans; if (ok) got += 2; else wrong.push('(' + (i+1) + ') ' + s.dataset.ans); s.className = ok ? 'ok' : 'no'; });
+    const fb = document.getElementById('pb-fb'); fb.className = 'fb ' + (wrong.length ? 'no' : 'ok'); fb.textContent = wrong.length ? 'Correct terms for the red blanks: ' + wrong.join('; ') + '.' : 'All 15 blanks correct.';
+  }
+  if (part === 'pc') {
+    TF.forEach((t,i) => { max += 1; const sel = document.querySelector('input[name="tf' + i + '"]:checked'); const fb = document.querySelectorAll('#pc .q')[i].querySelector('.fb'); const ok = sel && (sel.value === 'true') === t.a; if (ok) got += 1; fb.className = 'fb ' + (ok ? 'ok' : 'no'); fb.textContent = (ok ? 'Correct. ' : 'Answer: ' + (t.a ? 'True' : 'False') + '. ') + t.e; });
+  }
+  if (part === 'pd') {
+    PROBS.forEach((p,pi) => {
+      const per = p.pts / p.fields.length; let pg = 0;
+      p.fields.forEach((f,fi) => {
+        const el = document.getElementById('p' + pi + 'f' + fi); let ok;
+        if (f.sel) ok = el.value === f.a; else { const v = parseFloat(el.value.replace(',', '.')); ok = !isNaN(v) && Math.abs(v - f.a) <= f.tol; }
+        el.className = ok ? 'ok' : 'no'; if (ok) pg += per;
+      });
+      max += p.pts; got += pg;
+      const fb = document.querySelector('#pr' + pi + ' .fb');
+      fb.className = 'fb ' + (pg === p.pts ? 'ok' : 'no');
+      fb.textContent = (Math.round(pg*10)/10) + ' of ' + p.pts + ' points. Expected: ' + p.fields.map(f => f.a).join(', ') + '.';
+      document.getElementById('sol' + pi).classList.add('show');
+      document.querySelector('[data-sol="' + pi + '"]').textContent = 'Hide worked solution';
+    });
+  }
+  document.getElementById(part).classList.add('graded');
+  scores[part] = [got, max];
+  document.getElementById(part + '-score').textContent = '(' + (Math.round(got*10)/10) + ' / ' + max + ')';
+  updateTotal();
+}
+function updateTotal(){
+  const parts = Object.values(scores); if (!parts.length) return;
+  const g = parts.reduce((a,b) => a + b[0], 0), m = parts.reduce((a,b) => a + b[1], 0);
+  document.getElementById('total').textContent = 'Score: ' + (Math.round(g*10)/10) + ' / ' + m + (m === 100 ? '' : ' (graded so far)');
+}
+exam.addEventListener('click', e => {
+  const g = e.target.closest('[data-grade]'); if (g) grade(g.dataset.grade);
+  const s = e.target.closest('[data-sol]'); if (s) { const el = document.getElementById('sol' + s.dataset.sol); el.classList.toggle('show'); s.textContent = el.classList.contains('show') ? 'Hide worked solution' : 'Show worked solution'; }
+});
+function gradeAll(){ ['pa','pb','pc','pd'].forEach(grade); document.getElementById('total').scrollIntoView({block:'center'}); }
+function resetAll(){
+  exam.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+  exam.querySelectorAll('input[type=text]').forEach(r => { r.value = ''; r.className = ''; });
+  exam.querySelectorAll('select').forEach(s => { s.value = ''; s.className = ''; });
+  exam.querySelectorAll('.part').forEach(p => p.classList.remove('graded'));
+  exam.querySelectorAll('.sol').forEach(p => p.classList.remove('show'));
+  exam.querySelectorAll('[data-sol]').forEach(b => b.textContent = 'Show worked solution');
+  exam.querySelectorAll('.part-score').forEach(p => p.textContent = '');
+  for (const k in scores) delete scores[k];
+  document.getElementById('total').textContent = 'Score: not graded';
+  clearInterval(tick); timerStarted = false; document.getElementById('timer').textContent = TIMER_TEXT;
+}
+['gradeAll','gradeAll2'].forEach(id => document.getElementById(id).addEventListener('click', gradeAll));
+['resetAll','resetAll2'].forEach(id => document.getElementById(id).addEventListener('click', resetAll));
+
+showTab(getHash() === '#test' ? 'test' : 'ideas');
+</script>
+<script src="progress.js"></script>
+<script src="play.js"></script>
+<script src="fx.js"></script>
+</body>
+</html>
+

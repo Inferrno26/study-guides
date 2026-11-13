@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm Study Guides · Fall 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4f1; --surface:#fff; --ink:#1b1b1a; --muted:#62605b; --line:#e0ddd6;
+  --dm:#b5481b; --dm-soft:#fbe8dc;
+  --ai:#0d6b57; --ai-soft:#e1f0eb;
+  --nw:#2450b8; --nw-soft:#e3eafb;
+  --good:#1d7a3a; --good-soft:#e3f3e7; --trap:#b4313f; --trap-soft:#fbe6e8; --check:#8a5a00; --check-soft:#fbf0d9; --accent:#1b1b1a;
+  --font-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121212; --surface:#1c1c1b; --ink:#ecebe8; --muted:#a3a09a; --line:#2f2e2c;
+    --dm:#f08a4b; --dm-soft:#3d2416;
+    --ai:#4cc5a6; --ai-soft:#183a31;
+    --nw:#86a7ff; --nw-soft:#1c2a4d;
+    --good:#6fd38c; --good-soft:#18331f; --trap:#f08590; --trap-soft:#3a1d22; --check:#e9b553; --check-soft:#3a2f17; --accent:#ecebe8;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.5;min-height:100vh}
+.top{max-width:640px;margin:0 auto;padding:12px 16px 0;min-height:56px;display:flex;align-items:center}
+.back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);font-weight:600;font-size:.9rem;padding:6px 12px 6px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);min-height:40px;cursor:pointer;font-family:inherit}
+.back:hover{border-color:var(--c,var(--ink))}
+.back svg{width:18px;height:18px}
+.back[hidden]{display:none}
+.wrap{max-width:640px;margin:0 auto;padding:18px 16px 48px}
+h1{font-family:var(--font-display);font-size:clamp(1.8rem,7vw,2.5rem);letter-spacing:-.015em;margin:0;line-height:1.1;text-wrap:balance}
+.lead{color:var(--muted);margin:8px 0 24px}
+.list{display:grid;gap:12px}
+.opt{--c:var(--ink);--s:var(--line);display:flex;align-items:center;gap:14px;width:100%;text-align:left;text-decoration:none;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;font:inherit;min-height:76px;transition:border-color .15s,transform .15s}
+.opt:hover{border-color:var(--c)}
+.opt:active{transform:scale(.99)}
+.opt:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.opt .ic{flex:none;width:48px;height:48px;border-radius:12px;background:var(--s);color:var(--c);display:flex;align-items:center;justify-content:center}
+.opt .ic svg{width:24px;height:24px}
+.opt .tx{flex:1;min-width:0}
+.opt .tt{display:block;font-family:var(--font-display);font-size:1.2rem;font-weight:700;line-height:1.2}
+.opt .ds{display:block;color:var(--muted);font-size:.9rem;margin-top:2px}
+.opt .code{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.opt .ar{flex:none;color:var(--muted)}
+.opt .ar svg{width:20px;height:20px}
+.dm{--c:var(--dm);--s:var(--dm-soft)}
+.ai{--c:var(--ai);--s:var(--ai-soft)}
+.nw{--c:var(--nw);--s:var(--nw-soft)}
+.badge{display:inline-block;font-family:var(--font-body);font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c);background:var(--s);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:3px}
+.sec{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.sec:first-of-type{margin-top:0}
+.kicker{font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--c);margin:0 0 4px}
+.foot{margin-top:28px;font-size:.85rem;color:var(--muted)}
+[hidden]{display:none!important}
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.22s}
+.top{view-transition-name:appbar}
+.top .fxctl{margin-left:auto}
+.kicker{color:var(--c,var(--muted))}
+/* Today panel */
+.today{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 22px}
+.trow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+.tlv{display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:3px;align-items:center;min-width:0}
+.tlvn{grid-row:1/4;align-self:stretch;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;background:var(--ink);color:var(--surface);border-radius:12px;min-width:50px;padding:6px}
+.tlvname{font-weight:700;font-family:var(--font-display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txp{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.txp div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--dm),var(--ai),var(--nw))}
+.txpt{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tgoal{position:relative;display:flex;align-items:center;gap:6px}
+.ring{width:42px;height:42px;transform:rotate(-90deg)}
+.ring .rt{fill:none;stroke:var(--line);stroke-width:4.5}
+.ring .rf{fill:none;stroke:var(--ink);stroke-width:4.5;stroke-linecap:round}
+.tgoal.done .rf{stroke:var(--good)}
+.tgoal .rl{position:absolute;left:0;width:42px;text-align:center;font-weight:700;font-size:.82rem}
+.tgoal.done .rl{color:var(--good)}
+.tcap{font-size:.68rem;line-height:1.15;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.tstreak{display:flex;align-items:center;gap:5px;padding-left:12px;border-left:1px solid var(--line)}
+.tstreak b{font-family:var(--font-display);font-size:1.4rem}
+.tstreak .fl{font-size:1.3rem;filter:grayscale(1);opacity:.45}.tstreak.on .fl{filter:none;opacity:1}
+.tmsg{margin:12px 0 0;font-size:.9rem;color:var(--muted)}
+.tmsg b{color:var(--ink)}
+.bdg{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.bdg summary{cursor:pointer;font-weight:600;font-size:.9rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.bdg summary::-webkit-details-marker{display:none}
+.bdg summary .bprev{font-size:1.1rem;letter-spacing:2px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.bitem{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px}
+.bitem .bi{font-size:1.4rem;flex:none}
+.bitem .bn{font-weight:600;font-size:.82rem;line-height:1.2}
+.bitem .bd{font-size:.72rem;color:var(--muted);line-height:1.25}
+.bitem.lock{opacity:.45}.bitem.lock .bi{filter:grayscale(1)}
+@media (max-width:420px){.tgoal .tcap{display:none}}
+@media (max-width:380px){.trow{grid-template-columns:1fr auto}.tstreak{grid-column:1/-1;border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:8px}}
+/* course card meta */
+.cmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.cmeta span{font-size:.75rem;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.cmeta .due{background:var(--trap);border-color:var(--trap);color:#fff}
+.cmeta .exam{background:var(--check-soft);border-color:transparent;color:var(--check)}
+.cbar{height:5px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+.cbar div{height:100%;background:var(--c);border-radius:999px}
+/* exam row on step 2 */
+.examrow{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:0 0 18px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.examrow label{font-weight:600;font-size:.9rem}
+.examrow input{font:inherit;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);color:var(--ink);min-height:38px}
+.examrow .eplan{flex-basis:100%;font-size:.88rem;color:var(--muted)}
+.examrow .eplan b{color:var(--c)}
+.opt .dueb{display:inline-block;font-family:var(--font-body);font-size:.7rem;font-weight:700;color:#fff;background:var(--trap);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:3px}
+
+@media (prefers-reduced-motion: no-preference){.view{animation:in .2s ease}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<div class="top"><a class="back" id="back" href="index.html" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Back</a></div>
+
+<main class="wrap">
+  <!-- Step 1: pick a course -->
+  <section class="view" id="v-courses">
+    <h1>What are you studying today?</h1>
+    <p class="lead">Pick a course, then choose how you want to study.</p>
+    <div class="today" id="today"></div>
+    <div class="list" id="courseList">
+      <a class="opt dm" href="#data-mining"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg></span><span class="tx"><span class="code">CEN376</span><span class="tt">Data Mining</span><span class="cmeta" data-meta="data-mining"></span><span class="cbar" data-bar="data-mining" hidden><div></div></span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+      <a class="opt ai" href="#ai"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span><span class="tx"><span class="code">CEN352</span><span class="tt">Artificial Intelligence</span><span class="cmeta" data-meta="ai"></span><span class="cbar" data-bar="ai" hidden><div></div></span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+      <a class="opt nw" href="#networks"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="6" height="5" rx="1"/><rect x="16" y="17" width="6" height="5" rx="1"/><path d="M12 7v5M5 17v-2.5h14V17M12 12v2.5"/></svg></span><span class="tx"><span class="code">Weeks 1–6</span><span class="tt">Computer Networks</span><span class="cmeta" data-meta="networks"></span><span class="cbar" data-bar="networks" hidden><div></div></span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    </div>
+    <p class="foot">Your progress is saved on each device, separately for each course.</p>
+  </section>
+
+  <!-- Step 2: pick a mode -->
+  <section class="view" id="v-modes" hidden>
+    <p class="kicker" id="m-code"></p>
+    <h1 id="m-title"></h1>
+    <p class="lead">How do you want to study?</p>
+    <div class="examrow"><label for="examDate">🗓️ Midterm date</label><input type="date" id="examDate"><span class="eplan" id="ePlan"></span></div>
+    <p class="sec">Learn</p>
+    <div class="list">
+      <a class="opt" data-path=""><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h8z"/></svg></span><span class="tx"><span class="tt">Key ideas</span><span class="ds">Every concept explained, plus labs. Tick what you know.</span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+      <a class="opt" data-path="#cards"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="15" rx="2"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/></svg></span><span class="tx"><span class="tt">Flashcards</span><span class="ds">Term on the front, meaning on the back. Swipe through them.</span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    </div>
+    <p class="sec">Practice</p>
+    <div class="list">
+      <a class="opt" data-path="#review"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></span><span class="tx"><span class="tt">Daily review <span class="dueb" id="mDue" hidden></span></span><span class="ds">What you missed comes back at the right time. Your weak spots and topic mastery.</span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+      <a class="opt" data-path="#play"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span><span class="tx"><span class="tt">Quick quiz <span class="badge">Game</span></span><span class="ds">One random question at a time. Build a streak.</span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+      <a class="opt" data-path="#test"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><path d="M9 14l2 2 4-4"/></svg></span><span class="tx"><span class="tt">Full practice test</span><span class="ds">A complete timed midterm you can grade yourself.</span></span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></a>
+    </div>
+  </section>
+</main>
+
+<script src="progress.js"></script>
+<script>
+const COURSES = {
+  'data-mining': { cls: 'dm', code: 'CEN376', title: 'Data Mining' },
+  'ai':          { cls: 'ai', code: 'CEN352', title: 'Artificial Intelligence' },
+  'networks':    { cls: 'nw', code: 'Weeks 1–6', title: 'Computer Networks' }
+};
+const back = document.getElementById('back');
+const vCourses = document.getElementById('v-courses'), vModes = document.getElementById('v-modes');
+function route() {
+  let h = '';
+  try { h = decodeURIComponent(location.hash.slice(1)); } catch (e) {}
+  const c = COURSES[h];
+  vCourses.hidden = !!c; vModes.hidden = !c; back.hidden = !c;
+  document.body.className = c ? c.cls : '';
+  if (c) {
+    document.getElementById('m-code').textContent = c.code;
+    document.getElementById('m-title').textContent = c.title;
+    vModes.querySelectorAll('[data-path]').forEach(a => a.href = h + '.html' + a.dataset.path);
+    document.title = c.title + ' · Study';
+    if (window.PROG) paintModes(h);
+  } else { document.title = 'Midterm Study Guides · Fall 2026'; if (window.PROG) paintToday(); }
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+const P = window.PROG;
+function ring(frac, label) {
+  const r = 17, c = 2 * Math.PI * r, f = Math.max(0, Math.min(1, frac));
+  return '<svg viewBox="0 0 42 42" class="ring" aria-hidden="true"><circle cx="21" cy="21" r="' + r + '" class="rt"/><circle cx="21" cy="21" r="' + r + '" class="rf" stroke-dasharray="' + c + '" stroke-dashoffset="' + (c * (1 - f)) + '"/></svg><span class="rl">' + label + '</span>';
+}
+function examText(e) { return e.days === 0 ? 'Midterm today' : e.days === 1 ? 'Midterm tomorrow' : 'Midterm in ' + e.days + ' days'; }
+function paintToday() {
+  if (!P) return;
+  const lv = P.level(), st = P.streak(), s = P.stats();
+  let totalDue = 0; Object.keys(COURSES).forEach(k => { totalDue += P.dueIds(P.slugToId(k)).length; });
+  const earned = P.BADGES.filter(b => s.badges[b.id]);
+  let msg;
+  if (!s.answers && !s.cards) msg = 'Answer questions or swipe flashcards to earn XP. Aim for <b>' + st.goal + '</b> a day.';
+  else if (st.todayDone) msg = '✅ Daily goal done. ' + (totalDue ? 'You still have <b>' + totalDue + '</b> to review if you want extra XP.' : 'See you tomorrow!');
+  else if (P.STREAKS && st.atRisk) msg = '\u{1F525} Do <b>' + (st.goal - st.todayCount) + ' more</b> today to keep your ' + st.days + '-day streak.';
+  else msg = '<b>' + (st.goal - st.todayCount) + '</b> more to hit today’s goal.' + (totalDue ? ' <b>' + totalDue + '</b> waiting in your reviews.' : '');
+  document.getElementById('today').innerHTML =
+    '<div class="trow"><div class="tlv"><span class="tlvn">Lv ' + lv.level + '</span><span class="tlvname">' + lv.name + '</span><div class="txp"><div style="width:' + (lv.pct * 100) + '%"></div></div><span class="txpt">' + lv.xp + ' / ' + lv.hi + ' XP</span></div>' +
+    '<div class="tgoal' + (st.todayDone ? ' done' : '') + '">' + ring(st.todayCount / st.goal, st.todayDone ? '✓' : st.todayCount) + '<span class="tcap">Today<br>' + Math.min(st.todayCount, st.goal) + '/' + st.goal + '</span></div>' +
+    (P.STREAKS
+      ? '<div class="tstreak' + (st.days ? ' on' : '') + '"><span class="fl">\u{1F525}</span><b>' + st.days + '</b><span class="tcap">day<br>streak</span></div></div>'
+      : (() => { const ne = P.nextExam(); return ne
+          ? '<div class="tstreak on" title="' + ne.title + ' midterm"><span class="fl">\u23F3</span><b>' + ne.days + '</b><span class="tcap">days to<br>' + ne.short + '</span></div></div>'
+          : '<div class="tstreak"><span class="fl">\u23F3</span><span class="tcap">No exam<br>date set</span></div></div>'; })()) +
+    '<p class="tmsg">' + msg + '</p>' +
+    '<details class="bdg"><summary><span>Badges ' + earned.length + ' / ' + P.BADGES.length + '</span><span class="bprev">' + (earned.map(b => b.icon).join('') || '—') + '</span></summary><div class="bgrid">' +
+      P.BADGES.map(b => '<div class="bitem' + (s.badges[b.id] ? '' : ' lock') + '"><span class="bi">' + b.icon + '</span><span><span class="bn">' + b.name + '</span><br><span class="bd">' + b.desc + '</span></span></div>').join('') +
+    '</div></details>';
+  Object.keys(COURSES).forEach(slug => {
+    const id = P.slugToId(slug), sm = P.summary(id), e = P.examInfo(slug), parts = [];
+    if (sm.due) parts.push('<span class="due">' + sm.due + ' to review</span>');
+    if (sm.total) parts.push('<span>' + Math.round(sm.mastery * 100) + '% mastered</span>');
+    else parts.push('<span>Not started</span>');
+    if (e && e.days >= 0) parts.push('<span class="exam">' + examText(e) + '</span>');
+    document.querySelector('[data-meta="' + slug + '"]').innerHTML = parts.join('');
+    const bar = document.querySelector('[data-bar="' + slug + '"]');
+    bar.hidden = !sm.total; bar.firstChild.style.width = (sm.mastery * 100) + '%';
+  });
+}
+function paintModes(slug) {
+  if (!P) return;
+  const id = P.slugToId(slug), due = P.dueIds(id).length, b = document.getElementById('mDue');
+  b.hidden = !due; b.textContent = due + ' due';
+  document.getElementById('examDate').value = P.examDate(slug);
+  const e = P.examInfo(slug), plan = P.plan(slug), el = document.getElementById('ePlan');
+  if (!e) el.innerHTML = 'Set it once to see a countdown and a daily target.';
+  else if (e.days < 0) el.innerHTML = 'That date has passed. Hope it went well! Update it if there is another exam.';
+  else el.innerHTML = '<b>' + examText(e) + '.</b> ' + (plan && plan.total !== 0 && plan.perDay && e.days > 0 ? 'Aim for about <b>' + plan.perDay + '</b> questions or cards a day.' : plan && !plan.weak && P.summary(id).total ? 'You have mastered everything. Keep reviewing!' : 'Open the course once to get a daily target.');
+}
+document.getElementById('examDate').addEventListener('change', e => {
+  const slug = decodeURIComponent(location.hash.slice(1)); if (!COURSES[slug]) return;
+  P.setExam(slug, e.target.value); paintModes(slug); paintToday();
+});
+
+route();
+window.addEventListener('pageshow', e => { if (e.persisted) route(); });
+</script>
+<script src="fx.js"></script>
+</body>
+</html>
